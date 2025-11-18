@@ -6,58 +6,86 @@
 <title>ZTA - Profile</title>
 
 <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; font-family: Arial, sans-serif; }
+    * { margin:0; padding:0; box-sizing:border-box; font-family:Arial; }
     body {
-        background: url("assets/background.jpg") no-repeat center center fixed;
-        background-size: cover;
-        min-height: 100vh; color: white; overflow-x: hidden;
+        background:url("assets/background.jpg") no-repeat center center fixed;
+        background-size:cover;
+        min-height:100vh;
+        color:white;
     }
 
-    /* NAVBAR */
-    .navbar { width: 100%; padding: 25px 60px; display: flex; justify-content: space-between;
-        align-items: center; backdrop-filter: blur(10px); background: rgba(0,0,0,0.35);
-        position: sticky; top: 0; z-index: 999;
+    .navbar {
+        width:100%;
+        padding:25px 60px;
+        display:flex;
+        justify-content:space-between;
+        align-items:center;
+        background:rgba(0,0,0,0.35);
+        backdrop-filter:blur(10px);
+        position:sticky;
+        top:0;
+        z-index:999;
     }
-    .logo { font-size: 32px; font-weight: bold; letter-spacing: 3px; }
-    nav { display: flex; align-items: center; position: relative; }
-    nav a { margin-left: 25px; text-decoration: none; color: #fff; font-size: 17px; transition: 0.3s; }
-    nav a:hover { color: #ff5050; }
-    .btn-login { padding: 8px 18px; border: 1px solid #fff; border-radius: 6px; margin-left: 20px; }
-    .btn-login:hover { background: #ff5050; }
-    .account-btn { margin-left: 25px; cursor: pointer; font-size: 17px; color: white; display: none; }
+
+    nav a { margin-left:25px; color:white; text-decoration:none; font-size:17px; }
+    nav a:hover { color:#ff5050; }
+
+    .btn-login { border:1px solid white; padding:8px 18px; border-radius:6px; }
+    .btn-login:hover { background:#ff5050; }
+
+    .account-btn { display:none; margin-left:25px; cursor:pointer; }
+
     .dropdown {
-        position: absolute; top: 45px; right: 0; width: 160px; background: rgba(0,0,0,0.7);
-        backdrop-filter: blur(12px); border-radius: 8px; padding: 10px 0; display: none;
-        flex-direction: column; opacity: 0; transform: translateY(-10px); transition: .25s;
+        position:absolute; right:0; top:50px;
+        width:160px; flex-direction:column; display:none;
+        background:rgba(0,0,0,0.7);
+        padding:10px 0; border-radius:8px;
     }
-    .dropdown a { padding: 10px 22px; text-decoration: none; color: white; font-size: 15px; }
-    .dropdown a:hover { background: rgba(255, 80, 80, 0.35); }
+    .dropdown a { padding:10px 22px; color:white; }
 
-    /* PROFILE CARD */
+    /* Profile Card */
     .profile-card {
-        width: 420px; margin: 110px auto; background: rgba(0,0,0,0.55); backdrop-filter: blur(10px);
-        padding: 25px; border-radius: 12px; text-align: center;
+        width:420px;
+        margin:120px auto;
+        background:rgba(0,0,0,0.55);
+        backdrop-filter:blur(10px);
+        padding:25px;
+        border-radius:12px;
+        text-align:center;
     }
 
     .pfp {
-        width: 120px; height: 120px; border-radius: 50%; object-fit: cover;
-        border: 3px solid white; cursor: pointer; margin-bottom: 10px;
+        width:120px; height:120px;
+        border-radius:50%;
+        object-fit:cover;
+        border:3px solid white;
+        cursor:pointer;
+        margin-bottom:10px;
     }
 
     input, textarea {
-        width: 100%; padding: 12px; margin-top: 8px; margin-bottom: 12px;
-        border-radius: 6px; border: none; font-size: 16px; outline: none;
+        width:100%; padding:12px;
+        background:rgba(255,255,255,0.15);
+        border:none; border-radius:6px;
+        margin-top:10px;
+        color:white;
+        outline:none;
+        font-size:16px;
     }
-    textarea { height: 85px; resize: none; }
+
+    textarea { height:90px; resize:none; }
 
     .btn {
-        width: 100%; padding: 12px; background: #ff5050; color: white;
-        border: none; border-radius: 6px; font-size: 17px; cursor: pointer; margin-top: 10px;
+        width:100%; padding:12px;
+        background:#ff5050;
+        border:none; border-radius:6px;
+        color:white; font-size:17px;
+        margin-top:10px; cursor:pointer;
     }
-    .btn:hover { background: #ff2e2e; }
 
-    .danger { background: #d43535 !important; }
-    .danger:hover { background: #a81212 !important; }
+    .btn:hover { background:#ff2e2e; }
+    .danger { background:#d43535 !important; }
+    .danger:hover { background:#a81212 !important; }
 </style>
 </head>
 
@@ -73,10 +101,10 @@
         <a href="shop.html">Gear</a>
         <a href="contact.html">Contact</a>
 
-        <a href="auth.html" class="btn-login" id="loginBtn">Login</a>
-        <span class="account-btn" id="accountBtn">Account ▼</span>
+        <a href="auth.html" id="loginBtn" class="btn-login">Login</a>
+        <span id="accountBtn" class="account-btn">Account ▼</span>
 
-        <div class="dropdown" id="dropdownMenu">
+        <div id="dropdownMenu" class="dropdown">
             <a href="dashboard.html">Dashboard</a>
             <a href="profile.html">Profile</a>
             <a href="#" onclick="logoutUser()">Logout</a>
@@ -86,12 +114,12 @@
 
 <div class="profile-card">
 
-    <img id="profilePic" class="pfp" src="assets/default-pfp.png" alt="Profile Picture" onclick="uploadPFP()">
+    <img id="profilePic" class="pfp" src="assets/default-pfp.png" onclick="uploadPFP()">
 
     <h2 id="profileUsername">Username</h2>
     <p id="profileEmail" style="opacity:0.8; font-size:14px;">email@example.com</p>
-    <p style="opacity:0.7; font-size:13px;" id="createdDateText">Created: --</p>
-    <p style="opacity:0.7; font-size:13px;" id="lastLoginText">Last Login: --</p>
+    <p id="createdDateText" style="opacity:0.7; font-size:13px;">Created: --</p>
+    <p id="lastLoginText" style="opacity:0.7; font-size:13px;">Last Login: --</p>
 
     <textarea id="bioInput" placeholder="Write something about yourself..."></textarea>
 
@@ -101,33 +129,34 @@
 
 </div>
 
-<!-- FIREBASE -->
+<!-- FIREBASE SCRIPTS -->
 <script type="module">
 
 import { auth, db, storage } from "./firebase.js";
-import { 
-    onAuthStateChanged, 
-    updateProfile, 
+
+import {
+    onAuthStateChanged,
     deleteUser,
-    signOut 
+    signOut
 } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
 
-import { 
-    doc, 
-    getDoc, 
-    updateDoc 
+import {
+    doc,
+    getDoc,
+    updateDoc
 } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
 
-import { 
-    ref, 
-    uploadBytes, 
-    getDownloadURL 
+import {
+    ref,
+    uploadBytes,
+    getDownloadURL
 } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-storage.js";
 
-/* ==========================
-   LOAD USER DATA
-========================== */
+/* -----------------------------
+    LOAD USER DATA
+----------------------------- */
 onAuthStateChanged(auth, async (user) => {
+
     if (!user) {
         alert("Login required!");
         window.location.href = "auth.html";
@@ -140,7 +169,7 @@ onAuthStateChanged(auth, async (user) => {
     const snap = await getDoc(userRef);
 
     if (snap.exists()) {
-        let data = snap.data();
+        const data = snap.data();
         document.getElementById("profileUsername").innerText = data.username;
         document.getElementById("bioInput").value = data.bio || "";
         document.getElementById("createdDateText").innerText = "Created: " + (data.created || "--");
@@ -152,16 +181,16 @@ onAuthStateChanged(auth, async (user) => {
     }
 });
 
-/* ==========================
-   UPLOAD PFP
-========================== */
+/* -----------------------------
+    UPLOAD PROFILE PHOTO
+----------------------------- */
 window.uploadPFP = function () {
-    let input = document.createElement("input");
+    const input = document.createElement("input");
     input.type = "file";
     input.accept = "image/*";
 
     input.onchange = async () => {
-        let file = input.files[0];
+        const file = input.files[0];
         const user = auth.currentUser;
 
         const storageRef = ref(storage, "pfp/" + user.uid + ".jpg");
@@ -178,47 +207,53 @@ window.uploadPFP = function () {
     input.click();
 };
 
-/* ==========================
-   SAVE PROFILE
-========================== */
+/* -----------------------------
+    SAVE BIO
+----------------------------- */
 window.saveProfile = async function () {
     const user = auth.currentUser;
     const bio = document.getElementById("bioInput").value;
 
-    await updateDoc(doc(db, "users", user.uid), { bio: bio });
+    await updateDoc(doc(db, "users", user.uid), { bio });
     alert("Profile updated!");
 };
 
-/* ==========================
-   DOWNLOAD USER DATA
-========================== */
+/* -----------------------------
+    DOWNLOAD USER JSON
+----------------------------- */
 window.downloadUser = async function () {
     const user = auth.currentUser;
     const snap = await getDoc(doc(db, "users", user.uid));
 
-    const blob = new Blob([JSON.stringify(snap.data(), null, 2)], { type: "application/json" });
+    const blob = new Blob([JSON.stringify(snap.data(), null, 2)], {
+        type: "application/json"
+    });
+
     const a = document.createElement("a");
     a.href = URL.createObjectURL(blob);
     a.download = "zta_user.json";
     a.click();
 };
 
-/* ==========================
-   DELETE ACCOUNT
-========================== */
+/* -----------------------------
+    DELETE ACCOUNT
+----------------------------- */
 window.deleteAccount = async function () {
-    if (!confirm("Delete account permanently?")) return;
+
+    if (!confirm("Are you sure you want to permanently delete your account?"))
+        return;
 
     const user = auth.currentUser;
+
     await deleteUser(user);
 
     alert("Account deleted.");
     window.location.href = "auth.html";
 };
 
-/* ==========================
-   LOGOUT
-========================== */
+/* -----------------------------
+    LOGOUT
+----------------------------- */
 window.logoutUser = function () {
     signOut(auth);
     window.location.href = "auth.html";
