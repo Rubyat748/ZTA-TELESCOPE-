@@ -1,99 +1,87 @@
 /* =========================================================
-   ZTA - FIREBASE GLOBAL AUTH SYSTEM
-   Works for ALL pages
+   FIREBASE IMPORTS
 ========================================================= */
-
-// -------------------------------
-// FIREBASE IMPORTS
-// -------------------------------
-import {
-    initializeApp
-} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { auth, db } from "./firebase.js";
 
 import {
-    getAuth,
-    createUserWithEmailAndPassword,
-    signInWithEmailAndPassword,
+    onAuthStateChanged,
     signOut,
     GoogleAuthProvider,
     signInWithPopup,
-    onAuthStateChanged
-} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+    createUserWithEmailAndPassword,
+    signInWithEmailAndPassword
+} from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
 
 import {
-    getFirestore,
     doc,
     setDoc,
     getDoc
-} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+} from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
 
-// -------------------------------
-// FIREBASE CONFIG
-// -------------------------------
-const firebaseConfig = {
-    apiKey: "AIzaSyAvoeiw_fwmSkFN97hGzSsUTn2KJ1G2jQc",
-    authDomain: "astrophotography-with-zerox.firebaseapp.com",
-    projectId: "astrophotography-with-zerox",
-    storageBucket: "astrophotography-with-zerox.firebasestorage.app",
-    messagingSenderId: "847847244230",
-    appId: "1:847847244230:web:ecd8f9066f385a025072c7",
-    measurementId: "G-38YEEM9D71"
-};
+/* =========================================================
+   NAVBAR LOGIN / LOGOUT DISPLAY
+========================================================= */
+export function checkLoginStatus() {
+    const loginBtn = document.getElementById("loginBtn");
+    const accountBtn = document.getElementById("accountBtn");
 
-// Initialize Firebase
-const app = initializeApp(firebaseConfig);
-const auth = getAuth(app);
-const db = getFirestore(app);
+    onAuthStateChanged(auth, (user) => {
+        if (user) {
+            if (loginBtn) loginBtn.style.display = "none";
+            if (accountBtn) accountBtn.style.display = "inline-block";
+        } else {
+            if (loginBtn) loginBtn.style.display = "inline-block";
+            if (accountBtn) accountBtn.style.display = "none";
+        }
+    });
+}
 
-
-// =========================================================
-//   SIGNUP USER
-// =========================================================
+/* =========================================================
+   SIGNUP USER (EMAIL + PASSWORD)
+========================================================= */
 export async function signupUser(username, email, password) {
     try {
         const userCred = await createUserWithEmailAndPassword(auth, email, password);
 
-        // Create Firestore user data
+        // Save user into Firestore
         await setDoc(doc(db, "users", userCred.user.uid), {
             username: username,
             email: email,
             bio: "",
-            created: new Date().toISOString(),
-            lastLogin: new Date().toISOString(),
-            pfp: ""
+            pfpUrl: "",
+            created: new Date().toLocaleString(),
+            lastLogin: new Date().toLocaleString()
         });
 
         return { status: "success" };
-
-    } catch (error) {
-        return { status: "fail", message: error.message };
+    } catch (err) {
+        return { status: "error", message: err.message };
     }
 }
 
-
-// =========================================================
-//   LOGIN USER
-// =========================================================
+/* =========================================================
+   LOGIN USER (EMAIL + PASSWORD)
+========================================================= */
 export async function loginUser(email, password) {
     try {
         const userCred = await signInWithEmailAndPassword(auth, email, password);
 
-        // Update last login time
-        await setDoc(doc(db, "users", userCred.user.uid), {
-            lastLogin: new Date().toISOString()
-        }, { merge: true });
+        // Update last login
+        await setDoc(
+            doc(db, "users", userCred.user.uid),
+            { lastLogin: new Date().toLocaleString() },
+            { merge: true }
+        );
 
         return { status: "success" };
-
-    } catch (error) {
-        return { status: "fail", message: error.message };
+    } catch (err) {
+        return { status: "error", message: err.message };
     }
 }
 
-
-// =========================================================
-//   GOOGLE LOGIN
-// =========================================================
+/* =========================================================
+   GOOGLE LOGIN
+========================================================= */
 export async function googleAuth() {
     try {
         const provider = new GoogleAuthProvider();
@@ -101,88 +89,38 @@ export async function googleAuth() {
 
         const user = result.user;
 
-        // Check if user exists in DB
-        const ref = doc(db, "users", user.uid);
-        const snap = await getDoc(ref);
+        const userRef = doc(db, "users", user.uid);
+        const snap = await getDoc(userRef);
 
+        // If new user → create
         if (!snap.exists()) {
-            await setDoc(ref, {
+            await setDoc(userRef, {
                 username: user.displayName,
                 email: user.email,
                 bio: "",
-                pfp: user.photoURL,
-                created: new Date().toISOString(),
-                lastLogin: new Date().toISOString()
+                pfpUrl: user.photoURL || "",
+                created: new Date().toLocaleString(),
+                lastLogin: new Date().toLocaleString()
             });
+        } else {
+            // Existing → update last login
+            await setDoc(
+                userRef,
+                { lastLogin: new Date().toLocaleString() },
+                { merge: true }
+            );
         }
 
         return { status: "success" };
-
-    } catch (error) {
-        return { status: "fail", message: error.message };
+    } catch (err) {
+        return { status: "error", message: err.message };
     }
 }
 
-
-
-// =========================================================
-//   LOGOUT
-// =========================================================
-export function logout() {
-    signOut(auth).then(() => {
-        window.location.href = "auth.html";
-    });
+/* =========================================================
+   LOGOUT
+========================================================= */
+export function logoutUser() {
+    signOut(auth);
+    window.location.href = "auth.html";
 }
-
-
-
-// =========================================================
-//   LOAD NAVBAR LOGIN STATUS
-// =========================================================
-export function checkLoginStatus() {
-    onAuthStateChanged(auth, async (user) => {
-        const loginBtn = document.getElementById("loginBtn");
-        const accountBtn = document.getElementById("accountBtn");
-
-        if (!loginBtn || !accountBtn) return;
-
-        if (user) {
-            loginBtn.style.display = "none";
-            accountBtn.style.display = "inline-block";
-        } else {
-            loginBtn.style.display = "inline-block";
-            accountBtn.style.display = "none";
-        }
-    });
-}
-
-
-
-// =========================================================
-//   LOAD PROFILE DATA (Use inside profile.html)
-// =========================================================
-export async function loadProfilePage() {
-    onAuthStateChanged(auth, async (user) => {
-        if (!user) {
-            alert("Login required!");
-            window.location.href = "auth.html";
-            return;
-        }
-
-        const ref = doc(db, "users", user.uid);
-        const snap = await getDoc(ref);
-
-        let data = snap.data();
-
-        document.getElementById("profileUsername").innerText = data.username;
-        document.getElementById("profileEmail").innerText = data.email;
-        document.getElementById("bioInput").value = data.bio || "";
-        document.getElementById("createdDateText").innerText = "Created: " + data.created;
-        document.getElementById("lastLoginText").innerText = "Last Login: " + data.lastLogin;
-
-        if (data.pfp) {
-            document.getElementById("profilePic").src = data.pfp;
-        }
-    });
-}
-
