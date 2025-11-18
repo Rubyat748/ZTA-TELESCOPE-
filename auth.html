@@ -6,198 +6,130 @@
 <title>ZTA - Login / Signup</title>
 
 <style>
-    * {
-        margin: 0;
-        padding: 0;
-        box-sizing: border-box;
-        font-family: Arial, sans-serif;
-    }
-
     body {
         background: url("assets/background.jpg") no-repeat center center fixed;
         background-size: cover;
+        font-family: Arial, sans-serif;
         color: white;
-    }
-
-    /* NAVBAR */
-    .navbar {
-        width: 100%;
-        padding: 25px 60px;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        backdrop-filter: blur(10px);
-        background: rgba(0, 0, 0, 0.3);
-    }
-
-    .logo {
-        font-size: 32px;
-        font-weight: bold;
-        letter-spacing: 3px;
-    }
-
-    nav a {
-        margin-left: 25px;
-        text-decoration: none;
-        color: #fff;
-        font-size: 17px;
-        transition: 0.3s;
-    }
-
-    nav a:hover {
-        color: #ff5050;
-    }
-
-    /* AUTH BOX */
-    .auth-container {
-        width: 100%;
-        height: calc(100vh - 100px);
         display: flex;
         justify-content: center;
         align-items: center;
-        padding: 20px;
-        backdrop-filter: blur(3px);
+        height: 100vh;
     }
 
-    .auth-box {
-        width: 420px;
-        padding: 30px;
-        background: rgba(0, 0, 0, 0.6);
-        border-radius: 12px;
-        box-shadow: 0 0 20px black;
+    .box {
+        width: 330px;
+        padding: 25px;
+        background: rgba(0,0,0,0.6);
+        backdrop-filter: blur(5px);
+        border-radius: 10px;
     }
 
-    .auth-box h2 {
+    h2 {
         text-align: center;
-        margin-bottom: 25px;
-        font-size: 32px;
+        margin-bottom: 15px;
     }
 
-    .input-group {
-        margin-bottom: 18px;
-        width: 100%;
-    }
-
-    .input-group label {
-        display: block;
-        margin-bottom: 6px;
-        font-size: 15px;
-    }
-
-    .input-group input {
+    input {
         width: 100%;
         padding: 12px;
+        margin-top: 10px;
         border-radius: 8px;
         border: none;
-        outline: none;
+        background: rgba(255,255,255,0.1);
+        color: white;
         font-size: 16px;
+        outline: none;
     }
 
     button {
         width: 100%;
+        margin-top: 15px;
         padding: 12px;
-        font-size: 18px;
-        border-radius: 8px;
-        border: none;
         background: #ff5050;
         color: white;
+        border: none;
+        border-radius: 8px;
+        font-size: 18px;
         cursor: pointer;
-        margin-top: 10px;
-        transition: 0.3s;
     }
 
     button:hover {
-        background: #ff2424;
+        background: #ff2222;
     }
 
-    .switch {
-        text-align: center;
-        margin-top: 15px;
+    hr {
+        margin: 20px 0;
+        opacity: 0.3;
     }
-
-    .switch a {
-        color: #ff5050;
-        text-decoration: none;
-        font-weight: bold;
-    }
-
-    .switch a:hover {
-        text-decoration: underline;
-    }
-
 </style>
+
 </head>
 
 <body>
 
-<header class="navbar">
-    <div class="logo">ZTA</div>
-    <nav>
-        <a href="index.html">About Me</a>
-        <a href="gallery.html">Gallery</a>
-        <a href="mission.html">Mission</a>
-        <a href="shop.html">Gear</a>
-        <a href="contact.html">Contact</a>
-    </nav>
-</header>
+<div class="box">
+    <h2>Login</h2>
 
-<div class="auth-container">
-    <div class="auth-box" id="loginBox">
-        <h2>Login</h2>
+    <input type="text" id="login-user" placeholder="Email or Username">
+    <input type="password" id="login-pass" placeholder="Password">
 
-        <div class="input-group">
-            <label>Email or Username</label>
-            <input type="text" placeholder="Enter email or username">
-        </div>
+    <button onclick="login()">Login</button>
 
-        <div class="input-group">
-            <label>Password</label>
-            <input type="password" placeholder="Enter password">
-        </div>
+    <hr>
 
-        <button>Login</button>
+    <h2>Sign Up</h2>
 
-        <div class="switch">
-            Don't have an account? <a href="#" onclick="showSignup()">Sign Up</a>
-        </div>
-    </div>
+    <input type="text" id="signup-username" placeholder="Username">
+    <input type="email" id="signup-email" placeholder="Email">
+    <input type="password" id="signup-password" placeholder="Password">
 
-
-    <div class="auth-box" id="signupBox" style="display:none;">
-        <h2>Sign Up</h2>
-
-        <div class="input-group">
-            <label>Username</label>
-            <input type="text" placeholder="Choose a username">
-        </div>
-
-        <div class="input-group">
-            <label>Email</label>
-            <input type="email" placeholder="Enter email">
-        </div>
-
-        <div class="input-group">
-            <label>Password</label>
-            <input type="password" placeholder="Create password">
-        </div>
-
-        <button>Sign Up</button>
-
-        <div class="switch">
-            Already have an account? <a href="#" onclick="showLogin()">Login</a>
-        </div>
-    </div>
+    <button onclick="signup()">Sign Up</button>
 </div>
 
+<!-- JavaScript -->
 <script>
-    function showSignup() {
-        document.getElementById("loginBox").style.display = "none";
-        document.getElementById("signupBox").style.display = "block";
+    // SIGNUP FUNCTION
+    function signup() {
+        let username = document.getElementById("signup-username").value;
+        let email = document.getElementById("signup-email").value;
+        let password = document.getElementById("signup-password").value;
+
+        if (!username || !email || !password) {
+            alert("Please fill all fields");
+            return;
+        }
+
+        let user = {
+            username: username,
+            email: email,
+            password: password
+        };
+
+        localStorage.setItem("zta_user", JSON.stringify(user));
+
+        alert("Signup successful! Now login.");
+        window.location.href = "auth.html";
     }
 
-    function showLogin() {
-        document.getElementById("signupBox").style.display = "none";
-        document.getElementById("loginBox").style.display = "block";
+    // LOGIN FUNCTION
+    function login() {
+        let input = document.getElementById("login-user").value;
+        let pass = document.getElementById("login-pass").value;
+
+        let stored = JSON.parse(localStorage.getItem("zta_user"));
+
+        if (!stored) {
+            alert("No user found. Please sign up first.");
+            return;
+        }
+
+        if ((input === stored.email || input === stored.username) && pass === stored.password) {
+            alert("Login successful!");
+            window.location.href = "dashboard.html";
+        } else {
+            alert("Wrong email/username or password");
+        }
     }
 </script>
 
