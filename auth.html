@@ -54,107 +54,101 @@
         cursor: pointer;
     }
 
-    button:hover {
-        background: #ff2222;
-    }
-
     hr {
         margin: 20px 0;
-        opacity: 0.3;
+        opacity: 0.4;
     }
 </style>
-
 </head>
 
 <body>
 
 <div class="box">
-    <h2>Login</h2>
 
+    <h2>Login</h2>
     <input type="text" id="login-user" placeholder="Email or Username">
     <input type="password" id="login-pass" placeholder="Password">
-
     <button onclick="login()">Login</button>
 
     <hr>
 
     <h2>Sign Up</h2>
-
     <input type="text" id="signup-username" placeholder="Username">
     <input type="email" id="signup-email" placeholder="Email">
     <input type="password" id="signup-password" placeholder="Password">
-
     <button onclick="signup()">Sign Up</button>
+
 </div>
 
+
 <script>
-/* -------------------------------
-   DOWNLOAD JSON FILE FUNCTION
---------------------------------*/
+
+// ----------------------
+// DOWNLOAD JSON FUNCTION
+// ----------------------
 function downloadJSON(data, filename) {
     let file = new Blob([JSON.stringify(data, null, 4)], { type: "application/json" });
-    let url = URL.createObjectURL(file);
 
     let a = document.createElement("a");
-    a.href = url;
+    a.href = URL.createObjectURL(file);
     a.download = filename;
     a.click();
 
-    URL.revokeObjectURL(url);
+    URL.revokeObjectURL(a.href);
 }
 
-/* -------------------------------
-   SIGNUP FUNCTION
---------------------------------*/
+
+
+// ----------------------
+// SIGN UP
+// ----------------------
 function signup() {
-    let username = document.getElementById("signup-username").value;
-    let email = document.getElementById("signup-email").value;
-    let password = document.getElementById("signup-password").value;
+    let username = document.getElementById("signup-username").value.trim();
+    let email = document.getElementById("signup-email").value.trim();
+    let password = document.getElementById("signup-password").value.trim();
 
     if (!username || !email || !password) {
-        alert("Please fill all fields");
+        alert("Fill all fields!");
         return;
     }
 
-    let user = {
-        username: username,
-        email: email,
-        password: password
-    };
+    let user = { username, email, password };
 
-    // Save to localStorage (for login system)
+    // Save in storage
     localStorage.setItem("zta_user", JSON.stringify(user));
 
-    // Download user data as JSON file to phone storage
+    // Download JSON file
     downloadJSON(user, "zta_user.json");
 
-    alert("Signup complete! Your account file has been saved.\nNow please login.");
-    window.location.href = "auth.html";
+    alert("Sign Up Completed! Now Login.");
+    window.location.reload();
 }
 
-/* -------------------------------
-   LOGIN FUNCTION
---------------------------------*/
+
+
+// ----------------------
+// LOGIN
+// ----------------------
 function login() {
-    let input = document.getElementById("login-user").value;
-    let pass = document.getElementById("login-pass").value;
+    let inputUser = document.getElementById("login-user").value.trim();
+    let pass = document.getElementById("login-pass").value.trim();
 
-    let stored = JSON.parse(localStorage.getItem("zta_user"));
-
+    let stored = localStorage.getItem("zta_user");
     if (!stored) {
         alert("No user found. Please sign up first.");
         return;
     }
 
-    if ((input === stored.email || input === stored.username) &&
-        pass === stored.password) {
+    let user = JSON.parse(stored);
 
-        alert("Login successful!");
+    if ((inputUser === user.email || inputUser === user.username) && pass === user.password) {
+        alert("Login Successful!");
         window.location.href = "dashboard.html";
     } else {
-        alert("Wrong username/email or password");
+        alert("Incorrect Username/Email or Password");
     }
 }
+
 </script>
 
 </body>
