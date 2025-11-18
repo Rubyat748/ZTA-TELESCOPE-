@@ -87,50 +87,74 @@
     <button onclick="signup()">Sign Up</button>
 </div>
 
-<!-- JavaScript -->
 <script>
-    // SIGNUP FUNCTION
-    function signup() {
-        let username = document.getElementById("signup-username").value;
-        let email = document.getElementById("signup-email").value;
-        let password = document.getElementById("signup-password").value;
+/* -------------------------------
+   DOWNLOAD JSON FILE FUNCTION
+--------------------------------*/
+function downloadJSON(data, filename) {
+    let file = new Blob([JSON.stringify(data, null, 4)], { type: "application/json" });
+    let url = URL.createObjectURL(file);
 
-        if (!username || !email || !password) {
-            alert("Please fill all fields");
-            return;
-        }
+    let a = document.createElement("a");
+    a.href = url;
+    a.download = filename;
+    a.click();
 
-        let user = {
-            username: username,
-            email: email,
-            password: password
-        };
+    URL.revokeObjectURL(url);
+}
 
-        localStorage.setItem("zta_user", JSON.stringify(user));
+/* -------------------------------
+   SIGNUP FUNCTION
+--------------------------------*/
+function signup() {
+    let username = document.getElementById("signup-username").value;
+    let email = document.getElementById("signup-email").value;
+    let password = document.getElementById("signup-password").value;
 
-        alert("Signup successful! Now login.");
-        window.location.href = "auth.html";
+    if (!username || !email || !password) {
+        alert("Please fill all fields");
+        return;
     }
 
-    // LOGIN FUNCTION
-    function login() {
-        let input = document.getElementById("login-user").value;
-        let pass = document.getElementById("login-pass").value;
+    let user = {
+        username: username,
+        email: email,
+        password: password
+    };
 
-        let stored = JSON.parse(localStorage.getItem("zta_user"));
+    // Save to localStorage (for login system)
+    localStorage.setItem("zta_user", JSON.stringify(user));
 
-        if (!stored) {
-            alert("No user found. Please sign up first.");
-            return;
-        }
+    // Download user data as JSON file to phone storage
+    downloadJSON(user, "zta_user.json");
 
-        if ((input === stored.email || input === stored.username) && pass === stored.password) {
-            alert("Login successful!");
-            window.location.href = "dashboard.html";
-        } else {
-            alert("Wrong email/username or password");
-        }
+    alert("Signup complete! Your account file has been saved.\nNow please login.");
+    window.location.href = "auth.html";
+}
+
+/* -------------------------------
+   LOGIN FUNCTION
+--------------------------------*/
+function login() {
+    let input = document.getElementById("login-user").value;
+    let pass = document.getElementById("login-pass").value;
+
+    let stored = JSON.parse(localStorage.getItem("zta_user"));
+
+    if (!stored) {
+        alert("No user found. Please sign up first.");
+        return;
     }
+
+    if ((input === stored.email || input === stored.username) &&
+        pass === stored.password) {
+
+        alert("Login successful!");
+        window.location.href = "dashboard.html";
+    } else {
+        alert("Wrong username/email or password");
+    }
+}
 </script>
 
 </body>
