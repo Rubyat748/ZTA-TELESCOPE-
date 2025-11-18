@@ -52,9 +52,8 @@
     }
 
     .google-btn {
-        background: #fff;
-        color: #000;
-        margin-top: 12px;
+        background: white;
+        color: black;
         font-weight: bold;
     }
 
@@ -77,12 +76,11 @@
     <!-- LOGIN BOX -->
     <div id="loginBox">
         <h2>Login</h2>
-
         <input type="text" id="login_email" placeholder="Email">
         <input type="password" id="login_password" placeholder="Password">
         <button onclick="loginNow()">Login</button>
 
-        <button class="google-btn" onclick="googleNow()">Continue with Google</button>
+        <button class="google-btn" onclick="googleLogin()">Login with Google</button>
 
         <div class="switch" onclick="showSignup()">Don't have an account? Signup</div>
     </div>
@@ -90,7 +88,6 @@
     <!-- SIGNUP BOX -->
     <div id="signupBox" style="display:none;">
         <h2>Create Account</h2>
-
         <input type="text" id="signup_username" placeholder="Name">
         <input type="text" id="signup_email" placeholder="Email">
         <input type="password" id="signup_password" placeholder="Password">
@@ -101,31 +98,26 @@
 
 </div>
 
-<!-- LOAD FIREBASE FUNCTIONS -->
+<!-- FIREBASE AUTH + GLOBAL -->
 <script type="module">
-import { signupUser, loginUser, googleLogin } from "./global.js";
+import { signupUser, loginUser, googleAuth } from "./global.js";
 
+/* SWITCH LOGIN/SIGNUP */
 window.showSignup = function () {
     document.getElementById("loginBox").style.display = "none";
     document.getElementById("signupBox").style.display = "block";
 };
+
 window.showLogin = function () {
     document.getElementById("signupBox").style.display = "none";
     document.getElementById("loginBox").style.display = "block";
 };
 
-// -------------------------------
-// SIGNUP
-// -------------------------------
+/* SIGNUP */
 window.signupNow = async function () {
     let username = document.getElementById("signup_username").value.trim();
     let email = document.getElementById("signup_email").value.trim();
     let password = document.getElementById("signup_password").value.trim();
-
-    if (!username || !email || !password) {
-        alert("All fields required!");
-        return;
-    }
 
     let res = await signupUser(username, email, password);
 
@@ -137,17 +129,10 @@ window.signupNow = async function () {
     }
 };
 
-// -------------------------------
-// LOGIN
-// -------------------------------
+/* LOGIN */
 window.loginNow = async function () {
     let email = document.getElementById("login_email").value.trim();
     let password = document.getElementById("login_password").value.trim();
-
-    if (!email || !password) {
-        alert("Enter email & password");
-        return;
-    }
 
     let res = await loginUser(email, password);
 
@@ -158,19 +143,15 @@ window.loginNow = async function () {
     }
 };
 
-// -------------------------------
-// GOOGLE LOGIN
-// -------------------------------
-window.googleNow = async function () {
-    let res = await googleLogin();
-
+/* GOOGLE LOGIN */
+window.googleLogin = async function () {
+    let res = await googleAuth();
     if (res.status === "success") {
         window.location.href = "dashboard.html";
     } else {
         alert(res.message);
     }
 };
-
 </script>
 
 </body>
