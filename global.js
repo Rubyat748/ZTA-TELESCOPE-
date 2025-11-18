@@ -1,194 +1,159 @@
-// ------------------------------------------------------
-//  FIREBASE IMPORTS
-// ------------------------------------------------------
-import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
-import { 
-    getAuth, 
-    createUserWithEmailAndPassword, 
-    signInWithEmailAndPassword,
-    GoogleAuthProvider,
-    signInWithPopup,
-    signOut
-} from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>ZTA - Login / Signup</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-import { 
-    getFirestore,
-    doc,
-    setDoc,
-    getDoc
-} from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
+<style>
+    body {
+        margin: 0;
+        font-family: Arial, sans-serif;
+        background: url("assets/background.jpg") no-repeat center center fixed;
+        background-size: cover;
+        color: white;
+    }
 
+    .container {
+        width: 360px;
+        margin: 80px auto;
+        padding: 25px;
+        backdrop-filter: blur(12px);
+        background: rgba(0,0,0,0.55);
+        border-radius: 12px;
+    }
 
-// ------------------------------------------------------
-//  YOUR FIREBASE CONFIG
-// ------------------------------------------------------
-const firebaseConfig = {
-    apiKey: "AIzaSyAvoeiw_fwmSkFN97hGzSsUTn2KJ1G2jQc",
-    authDomain: "astrophotography-with-zerox.firebaseapp.com",
-    projectId: "astrophotography-with-zerox",
-    storageBucket: "astrophotography-with-zerox.firebasestorage.app",
-    messagingSenderId: "847847244230",
-    appId: "1:847847244230:web:ecd8f9066f385a025072c7",
-    measurementId: "G-38YEEM9D71"
+    h2 {
+        text-align: center;
+        margin-bottom: 25px;
+    }
+
+    input {
+        width: 100%;
+        padding: 12px;
+        margin-top: 12px;
+        border-radius: 6px;
+        border: none;
+        background: rgba(255,255,255,0.15);
+        color: white;
+        outline: none;
+    }
+
+    button {
+        width: 100%;
+        padding: 12px;
+        margin-top: 18px;
+        border: none;
+        background: #ff5050;
+        color: white;
+        border-radius: 6px;
+        font-size: 16px;
+        cursor: pointer;
+    }
+
+    .google-btn {
+        background: white;
+        color: black;
+        font-weight: bold;
+    }
+
+    .switch {
+        margin-top: 15px;
+        text-align: center;
+        cursor: pointer;
+        color: #ccc;
+    }
+
+    .switch:hover {
+        color: #ff5050;
+    }
+</style>
+</head>
+<body>
+
+<div class="container">
+
+    <!-- LOGIN BOX -->
+    <div id="loginBox">
+        <h2>Login</h2>
+        <input type="text" id="login_email" placeholder="Email">
+        <input type="password" id="login_password" placeholder="Password">
+        <button onclick="loginNow()">Login</button>
+
+        <button class="google-btn" onclick="googleLogin()">Login with Google</button>
+
+        <div class="switch" onclick="showSignup()">Don't have an account? Signup</div>
+    </div>
+
+    <!-- SIGNUP BOX -->
+    <div id="signupBox" style="display:none;">
+        <h2>Create Account</h2>
+        <input type="text" id="signup_username" placeholder="Name">
+        <input type="text" id="signup_email" placeholder="Email">
+        <input type="password" id="signup_password" placeholder="Password">
+        <button onclick="signupNow()">Create Account</button>
+
+        <div class="switch" onclick="showLogin()">Already have an account? Login</div>
+    </div>
+
+</div>
+
+<!-- FIREBASE AUTH + GLOBAL -->
+<script type="module">
+import { signupUser, loginUser, googleAuth } from "./global.js";
+
+/* SWITCH LOGIN/SIGNUP */
+window.showSignup = function () {
+    document.getElementById("loginBox").style.display = "none";
+    document.getElementById("signupBox").style.display = "block";
 };
 
+window.showLogin = function () {
+    document.getElementById("signupBox").style.display = "none";
+    document.getElementById("loginBox").style.display = "block";
+};
 
-// ------------------------------------------------------
-// INITIALIZE FIREBASE SERVICES
-// ------------------------------------------------------
-const app = initializeApp(firebaseConfig);
-const auth = getAuth(app);
-const db   = getFirestore(app);
-const googleProvider = new GoogleAuthProvider();
+/* SIGNUP */
+window.signupNow = async function () {
+    let username = document.getElementById("signup_username").value.trim();
+    let email = document.getElementById("signup_email").value.trim();
+    let password = document.getElementById("signup_password").value.trim();
 
+    let res = await signupUser(username, email, password);
 
-// Save user to localStorage
-function saveLocal(userData) {
-    localStorage.setItem("zta_user", JSON.stringify(userData));
-}
-
-
-// ------------------------------------------------------
-// SIGNUP USER (EMAIL + PASSWORD)
-// ------------------------------------------------------
-export async function signupUser(username, email, password) {
-    try {
-        let result = await createUserWithEmailAndPassword(auth, email, password);
-        
-        let uid = result.user.uid;
-        let created = new Date().toLocaleString();
-
-        let userData = {
-            uid,
-            username,
-            email,
-            created,
-            lastLogin: created,
-            bio: "",
-            pfp: ""
-        };
-
-        // Save in Firestore
-        await setDoc(doc(db, "users", uid), userData);
-
-        return { status: "success" };
-
-    } catch (err) {
-        return { status: "error", message: err.message };
-    }
-}
-
-
-// ------------------------------------------------------
-// LOGIN USER (EMAIL + PASSWORD)
-// ------------------------------------------------------
-export async function loginUser(email, password) {
-    try {
-        let result = await signInWithEmailAndPassword(auth, email, password);
-
-        let uid = result.user.uid;
-
-        // Load Firestore User Data
-        let snap = await getDoc(doc(db, "users", uid));
-
-        if (!snap.exists()) {
-            return { status: "error", message: "User data missing!" };
-        }
-
-        let userData = snap.data();
-        userData.lastLogin = new Date().toLocaleString();
-
-        // Update last login
-        await setDoc(doc(db, "users", uid), userData, { merge: true });
-
-        // Save locally
-        saveLocal(userData);
-
-        return { status: "success" };
-        
-    } catch (err) {
-        return { status: "error", message: err.message };
-    }
-}
-
-
-// ------------------------------------------------------
-// GOOGLE LOGIN
-// ------------------------------------------------------
-export async function googleLogin() {
-    try {
-        let result = await signInWithPopup(auth, googleProvider);
-
-        let user = result.user;
-        let uid = user.uid;
-
-        let userRef = doc(db, "users", uid);
-        let snap = await getDoc(userRef);
-
-        let data = {
-            uid,
-            username: user.displayName || "User",
-            email: user.email,
-            created: snap.exists() ? snap.data().created : new Date().toLocaleString(),
-            lastLogin: new Date().toLocaleString(),
-            bio: snap.exists() ? snap.data().bio : "",
-            pfp: user.photoURL || ""
-        };
-
-        await setDoc(userRef, data, { merge: true });
-
-        saveLocal(data);
-
-        return { status: "success" };
-
-    } catch (err) {
-        return { status: "error", message: err.message };
-    }
-}
-
-
-// ------------------------------------------------------
-// LOGOUT
-// ------------------------------------------------------
-export async function logout() {
-    await signOut(auth);
-    localStorage.removeItem("zta_user");
-    window.location.href = "auth.html";
-}
-
-
-// ------------------------------------------------------
-// CHECK LOGIN STATUS FOR NAVBAR
-// ------------------------------------------------------
-export function checkLoginStatus() {
-    let user = localStorage.getItem("zta_user");
-
-    let loginBtn    = document.getElementById("loginBtn");
-    let accountBtn  = document.getElementById("accountBtn");
-    let dropdown    = document.getElementById("dropdownMenu");
-
-    if (!loginBtn || !accountBtn) return;
-
-    if (user) {
-        loginBtn.style.display = "none";
-        accountBtn.style.display = "inline";
-
-        accountBtn.onclick = function () {
-            dropdown.style.display = dropdown.style.display === "flex" ? "none" : "flex";
-            dropdown.style.opacity = dropdown.style.opacity === "1" ? "0" : "1";
-        };
-
-        // Attach logout
-        window.logout = logout;
-
+    if (res.status === "success") {
+        alert("Account created!");
+        showLogin();
     } else {
-        loginBtn.style.display = "inline-block";
-        accountBtn.style.display = "none";
+        alert(res.message);
     }
-}
+};
 
+/* LOGIN */
+window.loginNow = async function () {
+    let email = document.getElementById("login_email").value.trim();
+    let password = document.getElementById("login_password").value.trim();
 
-// AUTO ACTIVATE NAVBAR ON EVERY PAGE
-document.addEventListener("DOMContentLoaded", () => {
-    checkLoginStatus();
-});
+    let res = await loginUser(email, password);
+
+    if (res.status === "success") {
+        window.location.href = "dashboard.html";
+    } else {
+        alert(res.message);
+    }
+};
+
+/* GOOGLE LOGIN */
+window.googleLogin = async function () {
+    let res = await googleAuth();
+    if (res.status === "success") {
+        window.location.href = "dashboard.html";
+    } else {
+        alert(res.message);
+    }
+};
+</script>
+
+</body>
+</html>
+    
