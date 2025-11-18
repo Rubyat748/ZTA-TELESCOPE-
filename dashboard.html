@@ -71,7 +71,6 @@
         border-color: #ff5050;
     }
 
-    /* ACCOUNT DROPDOWN */
     .account-btn {
         margin-left: 25px;
         cursor: pointer;
@@ -126,7 +125,6 @@
         opacity: 0.85;
         text-shadow: 0 0 10px black;
     }
-
 </style>
 </head>
 
@@ -142,13 +140,9 @@
         <a href="shop.html">Gear</a>
         <a href="contact.html">Contact</a>
 
-        <!-- Login button -->
         <a href="auth.html" class="btn-login" id="loginBtn">Login</a>
-
-        <!-- Account button -->
         <span class="account-btn" id="accountBtn">Account ▼</span>
 
-        <!-- Dropdown -->
         <div class="dropdown" id="dropdownMenu">
             <a href="dashboard.html">Dashboard</a>
             <a href="profile.html">Profile</a>
@@ -162,7 +156,29 @@
     <p>Your journey begins here. Explore the universe with ZTA.</p>
 </section>
 
+<!-- GLOBAL SCRIPT -->
 <script src="global.js"></script>
+
+<script>
+// FORCE LOGIN CHECK
+document.addEventListener("DOMContentLoaded", function () {
+    let user = localStorage.getItem("zta_user");
+
+    if (!user) {
+        alert("Login required!");
+        window.location.href = "auth.html";
+        return;
+    }
+
+    user = JSON.parse(user);
+
+    // Load username
+    document.getElementById("usernameDisplay").innerText = user.username;
+
+    // Run navbar login status
+    checkLoginStatus();
+});
+</script>
 
 </body>
 </html>
