@@ -1,18 +1,39 @@
-/* =========================================================
-   ZTA - UNIVERSAL AUTH SYSTEM
-   Works for ALL pages
-========================================================= */
+// --------------------------------------
+// ZTA - GLOBAL FIREBASE AUTH SYSTEM
+// --------------------------------------
 
-document.addEventListener("DOMContentLoaded", () => {
-    updateNavbar();
-    setupDropdown();
-});
+import {
+    auth,
+    db,
+    storage
+} from "./firebase.js";
 
-/* =========================================================
-   UPDATE NAVBAR LOGIN / ACCOUNT BUTTON
-========================================================= */
-function updateNavbar() {
-    let user = localStorage.getItem("zta_user");
+import {
+    createUserWithEmailAndPassword,
+    signInWithEmailAndPassword,
+    onAuthStateChanged,
+    signOut,
+    updatePassword
+} from "https://www.gstatic.com/firebasejs/10.9.0/firebase-auth.js";
+
+import {
+    doc,
+    setDoc,
+    getDoc,
+    updateDoc
+} from "https://www.gstatic.com/firebasejs/10.9.0/firebase-firestore.js";
+
+import {
+    ref,
+    uploadBytes,
+    getDownloadURL
+} from "https://www.gstatic.com/firebasejs/10.9.0/firebase-storage.js";
+
+
+// --------------------------------------
+// NAVBAR LOGIN CHECK
+// --------------------------------------
+onAuthStateChanged(auth, (user) => {
     const loginBtn = document.getElementById("loginBtn");
     const accountBtn = document.getElementById("accountBtn");
 
@@ -25,233 +46,95 @@ function updateNavbar() {
         loginBtn.style.display = "inline-block";
         accountBtn.style.display = "none";
     }
-}
+});
 
-/* =========================================================
-   DROPDOWN ANIMATION
-========================================================= */
-function setupDropdown() {
-    const btn = document.getElementById("accountBtn");
-    const menu = document.getElementById("dropdownMenu");
 
-    if (!btn || !menu) return;
+// --------------------------------------
+// SIGN UP
+// --------------------------------------
+export async function signupUser(username, email, password) {
+    try {
+        let userCred = await createUserWithEmailAndPassword(auth, email, password);
+        let uid = userCred.user.uid;
 
-    btn.onclick = () => {
-        if (menu.style.display === "flex") {
-            menu.style.opacity = "0";
-            menu.style.transform = "translateY(-10px)";
-            setTimeout(() => menu.style.display = "none", 200);
-        } else {
-            menu.style.display = "flex";
-            setTimeout(() => {
-                menu.style.opacity = "1";
-                menu.style.transform = "translateY(0)";
-            }, 10);
-        }
-    };
-}
+        await setDoc(doc(db, "users", uid), {
+            username,
+            email,
+            bio: "",
+            profilePic: "",
+            createdAt: new Date(),
+        });
 
-/* =========================================================
-   SIGNUP USER
-========================================================= */
-function signup() {
-    let username = document.getElementById("signup-username").value.trim();
-    let email = document.getElementById("signup-email").value.trim();
-    let password = document.getElementById("signup-password").value.trim();
-
-    if (!username || !email || !password) {
-        alert("Please fill all fields.");
-        return;
-    }
-
-    let user = {
-        username: username,
-        email: email,
-        password: password,
-        pfp: "",
-        bio: "",
-        created: new Date().toLocaleString(),
-        lastLogin: "--"
-    };
-
-    localStorage.setItem("zta_user", JSON.stringify(user));
-    alert("Signup successful! Now log in.");
-    window.location.href = "auth.html";
-}
-
-/* =========================================================
-   LOGIN USER
-========================================================= */
-function login() {
-    let inputUser = document.getElementById("login-user").value.trim();
-    let pass = document.getElementById("login-pass").value.trim();
-
-    let user = localStorage.getItem("zta_user");
-
-    if (!user) {
-        alert("No account found. Please sign up first.");
-        return;
-    }
-
-    user = JSON.parse(user);
-
-    if ((inputUser === user.username || inputUser === user.email) && pass === user.password) {
-        user.lastLogin = new Date().toLocaleString();
-        localStorage.setItem("zta_user", JSON.stringify(user));
-
-        alert("Login successful!");
-        window.location.href = "dashboard.html";
-    } else {
-        alert("Wrong username/email or password.");
+        return { status: "success" };
+    } catch (err) {
+        return { status: "error", message: err.message };
     }
 }
 
-/* =========================================================
-   LOGOUT
-========================================================= */
-function logout() {
-    if (confirm("Are you sure you want to logout?")) {
-        localStorage.removeItem("zta_user");
+
+// --------------------------------------
+// LOGIN
+// --------------------------------------
+export async function loginUser(email, password) {
+    try {
+        await signInWithEmailAndPassword(auth, email, password);
+        return { status: "success" };
+    } catch (err) {
+        return { status: "error", message: err.message };
+    }
+}
+
+
+// --------------------------------------
+// LOGOUT
+// --------------------------------------
+export function logoutUser() {
+    signOut(auth).then(() => {
         window.location.href = "index.html";
-    }
+    });
 }
 
-/* =========================================================
-   LOAD DASHBOARD DATA
-========================================================= */
-function loadDashboard() {
-    let user = JSON.parse(localStorage.getItem("zta_user"));
+
+// --------------------------------------
+// LOAD USER PROFILE
+// --------------------------------------
+export async function loadUserProfile() {
+    const user = auth.currentUser;
 
     if (!user) {
-        alert("Login first!");
         window.location.href = "auth.html";
         return;
     }
 
-    document.getElementById("usernameDisplay").innerText = user.username;
+    let snap = await getDoc(doc(db, "users", user.uid));
+    return snap.data();
 }
 
-/* =========================================================
-   LOAD PROFILE PAGE
-========================================================= */
-function loadProfile() {
-    let user = JSON.parse(localStorage.getItem("zta_user"));
 
-    if (!user) {
-        alert("Login required!");
-        window.location.href = "auth.html";
-        return;
-    }
+// --------------------------------------
+// UPDATE BIO
+// --------------------------------------
+export async function updateUserBio(bio) {
+    const user = auth.currentUser;
+    if (!user) return;
 
-    document.getElementById("profileUsername").innerText = user.username;
-    document.getElementById("profileEmail").innerText = user.email;
-    document.getElementById("bioInput").value = user.bio || "";
-
-    document.getElementById("createdDateText").innerText = "Created: " + user.created;
-    document.getElementById("lastLoginText").innerText = "Last Login: " + user.lastLogin;
-
-    if (user.pfp) {
-        document.getElementById("profilePic").src = user.pfp;
-    }
+    await updateDoc(doc(db, "users", user.uid), { bio });
 }
 
-/* =========================================================
-   UPLOAD PROFILE PICTURE
-========================================================= */
-function uploadPFP() {
-    let input = document.createElement("input");
-    input.type = "file";
-    input.accept = "image/*";
 
-    input.onchange = () => {
-        let file = input.files[0];
-        let reader = new FileReader();
+// --------------------------------------
+// UPLOAD PROFILE PICTURE
+// --------------------------------------
+export async function uploadProfilePic(file) {
+    const user = auth.currentUser;
+    if (!user) return;
 
-        reader.onload = function () {
-            let user = JSON.parse(localStorage.getItem("zta_user"));
-            user.pfp = reader.result;
-            localStorage.setItem("zta_user", JSON.stringify(user));
+    const picRef = ref(storage, "profilePics/" + user.uid);
 
-            document.getElementById("profilePic").src = reader.result;
-        };
+    await uploadBytes(picRef, file);
+    const url = await getDownloadURL(picRef);
 
-        reader.readAsDataURL(file);
-    };
+    await updateDoc(doc(db, "users", user.uid), { profilePic: url });
 
-    input.click();
-}
-
-/* =========================================================
-   SAVE PROFILE DATA
-========================================================= */
-function saveProfile() {
-    let user = JSON.parse(localStorage.getItem("zta_user"));
-    user.bio = document.getElementById("bioInput").value;
-
-    localStorage.setItem("zta_user", JSON.stringify(user));
-    alert("Profile saved!");
-}
-
-/* =========================================================
-   DOWNLOAD USER JSON
-========================================================= */
-function downloadUser() {
-    let data = localStorage.getItem("zta_user");
-    let blob = new Blob([data], {type: "application/json"});
-    let a = document.createElement("a");
-
-    a.href = URL.createObjectURL(blob);
-    a.download = "zta_user.json";
-    a.click();
-}
-
-/* =========================================================
-   DELETE ACCOUNT
-========================================================= */
-function deleteAccount() {
-    if (!confirm("Delete account permanently?")) return;
-
-    localStorage.removeItem("zta_user");
-    alert("Account deleted.");
-    window.location.href = "auth.html";
-}
-
-/* =========================================================
-   PASSWORD CHANGE
-========================================================= */
-function changePassword() {
-    let oldPass = document.getElementById("oldPass").value;
-    let newPass = document.getElementById("newPass").value;
-    let confirmPass = document.getElementById("confirmPass").value;
-
-    let user = JSON.parse(localStorage.getItem("zta_user"));
-
-    if (oldPass !== user.password) {
-        alert("Old password incorrect.");
-        return;
-    }
-
-    if (newPass !== confirmPass) {
-        alert("New passwords do not match.");
-        return;
-    }
-
-    user.password = newPass;
-    localStorage.setItem("zta_user", JSON.stringify(user));
-
-    alert("Password updated!");
-    window.location.href = "dashboard.html";
-}
-
-/* =========================================================
-   CHECK IF LOGIN REQUIRED FOR GALLERY
-========================================================= */
-function needLogin() {
-    let user = localStorage.getItem("zta_user");
-    if (!user) {
-        alert("You must be logged in to view this!");
-        window.location.href = "auth.html";
-        return false;
-    }
-    return true;
+    return url;
 }
