@@ -6,12 +6,7 @@
 <title>ZTA - Home</title>
 
 <style>
-    * {
-        margin: 0;
-        padding: 0;
-        box-sizing: border-box;
-        font-family: "Arial", sans-serif;
-    }
+    * { margin: 0; padding: 0; box-sizing: border-box; font-family: "Arial", sans-serif; }
 
     body {
         background: url("assets/background.jpg") no-repeat center center fixed;
@@ -41,11 +36,7 @@
         letter-spacing: 3px;
     }
 
-    nav {
-        display: flex;
-        align-items: center;
-        position: relative;
-    }
+    nav { display: flex; align-items: center; position: relative; }
 
     nav a {
         margin-left: 25px;
@@ -55,9 +46,7 @@
         transition: 0.3s;
     }
 
-    nav a:hover {
-        color: #ff5050;
-    }
+    nav a:hover { color: #ff5050; }
 
     /* LOGIN BUTTON */
     .btn-login {
@@ -87,7 +76,6 @@
         right: 0;
         width: 160px;
         background: rgba(0, 0, 0, 0.7);
-        backdrop-filter: blur(12px);
         border-radius: 8px;
         padding: 10px 0;
         display: none;
@@ -105,9 +93,7 @@
         transition: 0.3s;
     }
 
-    .dropdown a:hover {
-        background: rgba(255, 80, 80, 0.35);
-    }
+    .dropdown a:hover { background: rgba(255, 80, 80, 0.35); }
 
     /* HERO SECTION */
     .hero {
@@ -133,8 +119,7 @@
         margin-top: 20px;
         font-size: 20px;
         width: 70%;
-        margin-left: auto;
-        margin-right: auto;
+        margin: 20px auto;
         text-shadow: 0 0 10px black;
     }
 
@@ -179,7 +164,7 @@
         <div class="dropdown" id="dropdownMenu">
             <a href="dashboard.html">Dashboard</a>
             <a href="profile.html">Profile</a>
-            <a href="#" onclick="logout()">Logout</a>
+            <a href="#" id="logoutBtn">Logout</a>
         </div>
     </nav>
 </header>
@@ -192,8 +177,45 @@
     </div>
 </section>
 
-<!-- GLOBAL JS -->
-<script src="global.js"></script>
+<!-- FIREBASE LOGIN CHECK -->
+<script type="module">
+import { auth } from "./firebase.js";
+import { onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
+
+/* Elements */
+const loginBtn = document.getElementById("loginBtn");
+const accountBtn = document.getElementById("accountBtn");
+const dropdown = document.getElementById("dropdownMenu");
+
+/* LOGIN STATE */
+onAuthStateChanged(auth, (user) => {
+    if (user) {
+        loginBtn.style.display = "none";
+        accountBtn.style.display = "inline-block";
+    } else {
+        loginBtn.style.display = "inline-block";
+        accountBtn.style.display = "none";
+    }
+});
+
+/* DROPDOWN TOGGLE */
+accountBtn.addEventListener("click", () => {
+    if (dropdown.style.display === "flex") {
+        dropdown.style.display = "none";
+        dropdown.style.opacity = "0";
+    } else {
+        dropdown.style.display = "flex";
+        setTimeout(() => dropdown.style.opacity = "1", 50);
+    }
+});
+
+/* LOGOUT */
+document.getElementById("logoutBtn").addEventListener("click", () => {
+    signOut(auth).then(() => {
+        window.location.href = "auth.html";
+    });
+});
+</script>
 
 </body>
 </html>
