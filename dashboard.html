@@ -17,6 +17,7 @@
         background: url("assets/background.jpg") no-repeat center center fixed;
         background-size: cover;
         color: white;
+        min-height: 100vh;
         overflow-x: hidden;
     }
 
@@ -28,85 +29,140 @@
         justify-content: space-between;
         align-items: center;
         backdrop-filter: blur(10px);
-        background: rgba(0,0,0,0.4);
+        background: rgba(0, 0, 0, 0.35);
+        position: sticky;
+        top: 0;
+        z-index: 999;
     }
 
     .logo {
-        font-size: 34px;
+        font-size: 32px;
         font-weight: bold;
         letter-spacing: 3px;
     }
 
+    nav {
+        display: flex;
+        align-items: center;
+        position: relative;
+    }
+
     nav a {
         margin-left: 25px;
-        font-size: 18px;
         text-decoration: none;
-        color: white;
+        color: #fff;
+        font-size: 17px;
+        transition: 0.3s;
     }
 
     nav a:hover {
         color: #ff5050;
     }
 
-    .logout {
-        background: #ff5050;
-        padding: 8px 14px;
+    .btn-login {
+        padding: 8px 18px;
+        border: 1px solid #fff;
         border-radius: 6px;
-        color: white;
-        border: none;
-        cursor: pointer;
+        margin-left: 20px;
     }
 
-    .content {
+    .btn-login:hover {
+        background: #ff5050;
+        border-color: #ff5050;
+    }
+
+    /* ACCOUNT DROPDOWN */
+    .account-btn {
+        margin-left: 25px;
+        cursor: pointer;
+        font-size: 17px;
+        color: white;
+        display: none;
+    }
+
+    .dropdown {
+        position: absolute;
+        top: 45px;
+        right: 0;
+        width: 160px;
+        background: rgba(0,0,0,0.7);
+        backdrop-filter: blur(12px);
+        border-radius: 8px;
+        padding: 10px 0;
+        display: none;
+        flex-direction: column;
+        opacity: 0;
+        transform: translateY(-10px);
+        transition: 0.25s ease;
+    }
+
+    .dropdown a {
+        padding: 10px 20px;
+        text-decoration: none;
+        color: #fff;
+        font-size: 15px;
+        transition: 0.3s;
+    }
+
+    .dropdown a:hover {
+        background: rgba(255, 80, 80, 0.35);
+    }
+
+    /* CONTENT */
+    .center-box {
+        margin-top: 130px;
         text-align: center;
-        margin-top: 100px;
+        padding: 20px;
     }
 
     h1 {
         font-size: 42px;
+        text-shadow: 0 0 15px black;
     }
-</style>
 
+    p {
+        margin-top: 10px;
+        font-size: 22px;
+        opacity: 0.85;
+        text-shadow: 0 0 10px black;
+    }
+
+</style>
 </head>
 
 <body>
 
 <header class="navbar">
-
     <div class="logo">ZTA</div>
 
     <nav>
-        <a href="index.html">Home</a>
         <a href="index.html">About Me</a>
         <a href="gallery.html">Gallery</a>
         <a href="mission.html">Mission</a>
         <a href="shop.html">Gear</a>
         <a href="contact.html">Contact</a>
-        <button class="logout" onclick="logout()">Logout</button>
-    </nav>
 
+        <!-- Login button -->
+        <a href="auth.html" class="btn-login" id="loginBtn">Login</a>
+
+        <!-- Account button -->
+        <span class="account-btn" id="accountBtn">Account ▼</span>
+
+        <!-- Dropdown -->
+        <div class="dropdown" id="dropdownMenu">
+            <a href="dashboard.html">Dashboard</a>
+            <a href="profile.html">Profile</a>
+            <a href="#" onclick="logout()">Logout</a>
+        </div>
+    </nav>
 </header>
 
-<section class="content">
-    <h1>Welcome, <span id="username"></span>!</h1>
-    <p>You are logged into your ZTA dashboard.</p>
+<section class="center-box">
+    <h1>Welcome, <span id="usernameDisplay">User</span>!</h1>
+    <p>Your journey begins here. Explore the universe with ZTA.</p>
 </section>
 
-
-<script>
-    // LOAD USERNAME
-    let user = localStorage.getItem("zta_user");
-    if (!user) {
-        window.location.href = "auth.html";
-    } else {
-        document.getElementById("username").innerText = JSON.parse(user).username;
-    }
-
-    function logout() {
-        alert("Logged Out");
-        window.location.href = "auth.html";
-    }
-</script>
+<script src="global.js"></script>
 
 </body>
 </html>
