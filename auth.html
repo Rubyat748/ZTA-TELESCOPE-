@@ -78,9 +78,9 @@
         <h2>Login</h2>
         <input type="text" id="login_email" placeholder="Email">
         <input type="password" id="login_password" placeholder="Password">
-        <button onclick="loginNow()">Login</button>
+        <button id="loginBtn">Login</button>
 
-        <button class="google-btn" onclick="googleLogin()">Login with Google</button>
+        <button class="google-btn" id="googleBtn">Login with Google</button>
 
         <div class="switch" onclick="showSignup()">Don't have an account? Signup</div>
     </div>
@@ -91,67 +91,126 @@
         <input type="text" id="signup_username" placeholder="Name">
         <input type="text" id="signup_email" placeholder="Email">
         <input type="password" id="signup_password" placeholder="Password">
-        <button onclick="signupNow()">Create Account</button>
+        <button id="signupBtn">Create Account</button>
 
         <div class="switch" onclick="showLogin()">Already have an account? Login</div>
     </div>
 
 </div>
 
-<!-- FIREBASE AUTH + GLOBAL -->
+<!-- FIREBASE + CONNECTION -->
 <script type="module">
-import { signupUser, loginUser, googleAuth } from "./global.js";
 
-/* SWITCH LOGIN/SIGNUP */
+/* ------------------------------------------------
+   LOAD FIREBASE SDKs
+-------------------------------------------------- */
+import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
+import { 
+    getAuth, 
+    createUserWithEmailAndPassword, 
+    signInWithEmailAndPassword,
+    GoogleAuthProvider,
+    signInWithPopup
+} from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
+
+/* ------------------------------------------------
+   YOUR FIREBASE CONFIG
+-------------------------------------------------- */
+const firebaseConfig = {
+  apiKey: "AIzaSyAvoeiw_fwmSkFN97hGzSsUTn2KJ1G2jQc",
+  authDomain: "astrophotography-with-zerox.firebaseapp.com",
+  projectId: "astrophotography-with-zerox",
+  storageBucket: "astrophotography-with-zerox.firebasestorage.app",
+  messagingSenderId: "847847244230",
+  appId: "1:847847244230:web:ecd8f9066f385a025072c7",
+  measurementId: "G-38YEEM9D71"
+};
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const provider = new GoogleAuthProvider();
+
+/* ------------------------------------------------
+   SWITCH LOGIN / SIGNUP
+-------------------------------------------------- */
 window.showSignup = function () {
-    document.getElementById("loginBox").style.display = "none";
-    document.getElementById("signupBox").style.display = "block";
+    loginBox.style.display = "none";
+    signupBox.style.display = "block";
 };
 
 window.showLogin = function () {
-    document.getElementById("signupBox").style.display = "none";
-    document.getElementById("loginBox").style.display = "block";
+    signupBox.style.display = "none";
+    loginBox.style.display = "block";
 };
 
-/* SIGNUP */
-window.signupNow = async function () {
-    let username = document.getElementById("signup_username").value.trim();
-    let email = document.getElementById("signup_email").value.trim();
-    let password = document.getElementById("signup_password").value.trim();
+/* ------------------------------------------------
+   SIGNUP BUTTON
+-------------------------------------------------- */
+document.getElementById("signupBtn").addEventListener("click", async () => {
+    let username = signup_username.value.trim();
+    let email = signup_email.value.trim();
+    let password = signup_password.value.trim();
 
-    let res = await signupUser(username, email, password);
+    if (!username || !email || !password) {
+        alert("Fill all fields!");
+        return;
+    }
 
-    if (res.status === "success") {
-        alert("Account created!");
+    try {
+        await createUserWithEmailAndPassword(auth, email, password);
+
+        alert("Account created! Now login.");
         showLogin();
-    } else {
-        alert(res.message);
+
+    } catch (err) {
+        alert(err.message);
     }
-};
+});
 
-/* LOGIN */
-window.loginNow = async function () {
-    let email = document.getElementById("login_email").value.trim();
-    let password = document.getElementById("login_password").value.trim();
+/* ------------------------------------------------
+   LOGIN BUTTON
+-------------------------------------------------- */
+document.getElementById("loginBtn").addEventListener("click", async () => {
+    let email = login_email.value.trim();
+    let password = login_password.value.trim();
 
-    let res = await loginUser(email, password);
+    try {
+        let res = await signInWithEmailAndPassword(auth, email, password);
 
-    if (res.status === "success") {
+        // Save login
+        localStorage.setItem("zta_user", JSON.stringify({
+            email: res.user.email,
+            uid: res.user.uid,
+            provider: "password"
+        }));
+
         window.location.href = "dashboard.html";
-    } else {
-        alert(res.message);
-    }
-};
 
-/* GOOGLE LOGIN */
-window.googleLogin = async function () {
-    let res = await googleAuth();
-    if (res.status === "success") {
-        window.location.href = "dashboard.html";
-    } else {
-        alert(res.message);
+    } catch (err) {
+        alert(err.message);
     }
-};
+});
+
+/* ------------------------------------------------
+   GOOGLE LOGIN
+-------------------------------------------------- */
+document.getElementById("googleBtn").addEventListener("click", async () => {
+    try {
+        let result = await signInWithPopup(auth, provider);
+
+        localStorage.setItem("zta_user", JSON.stringify({
+            email: result.user.email,
+            uid: result.user.uid,
+            provider: "google"
+        }));
+
+        window.location.href = "dashboard.html";
+
+    } catch (err) {
+        alert(err.message);
+    }
+});
+
 </script>
 
 </body>
