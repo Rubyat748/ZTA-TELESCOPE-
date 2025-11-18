@@ -43,66 +43,18 @@
 
     nav {
         display: flex;
-        align-items: center;
-        position: relative;
+        gap: 25px;
     }
 
     nav a {
-        margin-left: 25px;
         text-decoration: none;
-        color: #fff;
+        color: white;
         font-size: 17px;
-        transition: 0.3s;
+        transition: .3s;
     }
 
     nav a:hover {
         color: #ff5050;
-    }
-
-    .btn-login {
-        padding: 8px 18px;
-        border: 1px solid #fff;
-        border-radius: 6px;
-        margin-left: 20px;
-    }
-
-    .btn-login:hover {
-        background: #ff5050;
-    }
-
-    .account-btn {
-        margin-left: 25px;
-        cursor: pointer;
-        font-size: 17px;
-        color: white;
-        display: none;
-    }
-
-    .dropdown {
-        position: absolute;
-        top: 45px;
-        right: 0;
-        width: 160px;
-        background: rgba(0,0,0,0.75);
-        backdrop-filter: blur(12px);
-        border-radius: 8px;
-        padding: 10px 0;
-        display: none;
-        flex-direction: column;
-        opacity: 0;
-        transform: translateY(-10px);
-        transition: .25s ease;
-    }
-
-    .dropdown a {
-        padding: 10px 22px;
-        color: white;
-        font-size: 15px;
-        text-decoration: none;
-    }
-
-    .dropdown a:hover {
-        background: rgba(255,80,80,0.35);
     }
 
     /* CONTACT FORM */
@@ -117,7 +69,6 @@
         width: 60%;
         max-width: 650px;
         text-align: center;
-        padding: 20px;
     }
 
     .contact-box h1 {
@@ -160,7 +111,6 @@
     }
 
     button {
-        margin-top: 10px;
         padding: 14px;
         background: rgba(255,255,255,0.25);
         border: none;
@@ -168,7 +118,7 @@
         color: white;
         font-size: 18px;
         cursor: pointer;
-        transition: .3s;
+        transition: 0.3s;
     }
 
     button:hover {
@@ -188,78 +138,37 @@
         <a href="mission.html">Mission</a>
         <a href="shop.html">Gear</a>
         <a href="contact.html">Contact</a>
-
-        <a href="auth.html" class="btn-login" id="loginBtn">Login</a>
-        <span class="account-btn" id="accountBtn">Account ▼</span>
-
-        <div class="dropdown" id="dropdownMenu">
-            <a href="dashboard.html">Dashboard</a>
-            <a href="profile.html">Profile</a>
-            <a href="#" onclick="logout()">Logout</a>
-        </div>
     </nav>
 </header>
 
 <section class="contact-wrapper">
     <div class="contact-box">
         <h1>WANT TO GET IN TOUCH?</h1>
-        <p>Feel free to send me a message and I’ll reply as soon as possible.</p>
+        <p>Send me a message and I will get back to you soon.</p>
 
-        <form id="contactForm">
+        <!-- FORM SUBMIT FORM -->
+        <form action="https://formsubmit.co/zeroxtheastrophotograper@gmail.com" method="POST">
+
+            <!-- Disable Captcha -->
+            <input type="hidden" name="_captcha" value="false">
+
+            <!-- Redirect To Custom Success Page -->
+            <input type="hidden" name="_next" value="success.html">
+
+            <!-- Form Fields -->
             <div class="input-row">
-                <input type="text" id="firstName" placeholder="First name">
-                <input type="text" id="lastName" placeholder="Last name">
+                <input type="text" name="first_name" placeholder="First name" required>
+                <input type="text" name="last_name" placeholder="Last name">
             </div>
 
-            <input type="email" id="email" placeholder="Your email">
+            <input type="email" name="email" placeholder="Your email" required>
 
-            <textarea id="message" placeholder="Your message"></textarea>
+            <textarea name="message" placeholder="Your message" required></textarea>
 
-            <button type="button" onclick="sendMessage()">Send Message</button>
+            <button type="submit">Send Message</button>
         </form>
     </div>
 </section>
-
-<script src="global.js"></script>
-
-<!-- EMAILJS SCRIPT -->
-<script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
-
-<script>
-emailjs.init("p1-aDbZd6817VN_Aq");  // your public key
-
-function sendMessage() {
-    let first = document.getElementById("firstName").value.trim();
-    let last = document.getElementById("lastName").value.trim();
-    let email = document.getElementById("email").value.trim();
-    let msg = document.getElementById("message").value.trim();
-
-    if (!first || !email || !msg) {
-        alert("Please fill all required fields.");
-        return;
-    }
-
-    let fullName = first + " " + last;
-    let title = "New Contact Message";
-    let time = new Date().toLocaleString();
-
-    emailjs.send("service_x1yd9nn", "template_s3tg0y1", {
-        name: fullName,
-        title: title,
-        time: time,
-        message: msg,
-        email: email
-    })
-    .then(() => {
-        alert("Message Sent Successfully!");
-        document.getElementById("contactForm").reset();
-    })
-    .catch(err => {
-        console.error(err);
-        alert("Failed to send message.");
-    });
-}
-</script>
 
 </body>
 </html>
