@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ZTA - Dashboard</title>
+
+<style>
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: Arial, sans-serif;
+    }
+
+    body {
+        background: url("assets/background.jpg") no-repeat center center fixed;
+        background-size: cover;
+        color: white;
+        overflow-x: hidden;
+    }
+
+    /* NAVBAR */
+    .navbar {
+        width: 100%;
+        padding: 25px 60px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        backdrop-filter: blur(10px);
+        background: rgba(0, 0, 0, 0.3);
+    }
+
+    .logo {
+        font-size: 32px;
+        font-weight: bold;
+        letter-spacing: 3px;
+    }
+
+    nav a {
+        margin-left: 25px;
+        text-decoration: none;
+        color: #fff;
+        font-size: 17px;
+        transition: 0.3s;
+    }
+
+    nav a:hover {
+        color: #ff5050;
+    }
+
+    /* DASHBOARD BOX */
+    .dash-container {
+        width: 100%;
+        height: calc(100vh - 100px);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 20px;
+    }
+
+    .dash-box {
+        width: 450px;
+        padding: 35px;
+        text-align: center;
+        background: rgba(0, 0, 0, 0.6);
+        border-radius: 14px;
+        box-shadow: 0 0 20px black;
+    }
+
+    .dash-box h1 {
+        font-size: 42px;
+        margin-bottom: 18px;
+        text-shadow: 0 0 12px black;
+    }
+
+    .dash-box p {
+        font-size: 20px;
+        margin-top: 10px;
+        opacity: 0.9;
+    }
+
+    button {
+        margin-top: 25px;
+        padding: 12px 25px;
+        font-size: 18px;
+        border-radius: 8px;
+        border: none;
+        background: #ff5050;
+        color: white;
+        cursor: pointer;
+        transition: 0.3s;
+    }
+
+    button:hover {
+        background: #ff2424;
+    }
+</style>
+
+</head>
+
+<body>
+
+<header class="navbar">
+    <div class="logo">ZTA</div>
+
+    <nav>
+        <a href="index.html">About Me</a>
+        <a href="gallery.html">Gallery</a>
+        <a href="mission.html">Mission</a>
+        <a href="content.html">Content</a>
+        <a href="shop.html">Gear</a>
+        <a href="contact.html">Contact</a>
+        <a href="auth.html">Login</a>
+    </nav>
+</header>
+
+
+<div class="dash-container">
+    <div class="dash-box">
+        <h1>Dashboard</h1>
+
+        <p id="welcomeText">Loading...</p>
+
+        <button onclick="logout()">Logout</button>
+    </div>
+</div>
+
+
+<script>
+    // Fetch username from backend
+    fetch("/dashboard", { method: "GET" })
+        .then(res => res.text())
+        .then(text => {
+            // The backend returns "Welcome USERNAME to your dashboard!"
+            if (text.includes("Welcome")) {
+                let name = text.replace("Welcome ", "").replace(" to your dashboard!", "");
+                document.getElementById("welcomeText").innerHTML = "Welcome, <b>" + name + "</b>";
+            } else {
+                window.location.href = "/auth.html";
+            }
+        });
+
+    function logout() {
+        window.location.href = "/logout";
+    }
+</script>
+
+</body>
+</html>

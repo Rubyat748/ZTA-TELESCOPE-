@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ZTA - Login / Signup</title>
+
+<style>
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: Arial, sans-serif;
+    }
+
+    body {
+        background: url("assets/background.jpg") no-repeat center center fixed;
+        background-size: cover;
+        color: white;
+    }
+
+    /* NAVBAR */
+    .navbar {
+        width: 100%;
+        padding: 25px 60px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        backdrop-filter: blur(10px);
+        background: rgba(0, 0, 0, 0.3);
+    }
+
+    .logo {
+        font-size: 32px;
+        font-weight: bold;
+        letter-spacing: 3px;
+    }
+
+    nav a {
+        margin-left: 25px;
+        text-decoration: none;
+        color: #fff;
+        font-size: 17px;
+        transition: 0.3s;
+    }
+
+    nav a:hover {
+        color: #ff5050;
+    }
+
+    /* AUTH BOX */
+    .auth-container {
+        width: 100%;
+        height: calc(100vh - 100px);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 20px;
+        backdrop-filter: blur(3px);
+    }
+
+    .auth-box {
+        width: 420px;
+        padding: 30px;
+        background: rgba(0, 0, 0, 0.6);
+        border-radius: 12px;
+        box-shadow: 0 0 20px black;
+    }
+
+    .auth-box h2 {
+        text-align: center;
+        margin-bottom: 25px;
+        font-size: 32px;
+    }
+
+    .input-group {
+        margin-bottom: 18px;
+        width: 100%;
+    }
+
+    .input-group label {
+        display: block;
+        margin-bottom: 6px;
+        font-size: 15px;
+    }
+
+    .input-group input {
+        width: 100%;
+        padding: 12px;
+        border-radius: 8px;
+        border: none;
+        outline: none;
+        font-size: 16px;
+    }
+
+    button {
+        width: 100%;
+        padding: 12px;
+        font-size: 18px;
+        border-radius: 8px;
+        border: none;
+        background: #ff5050;
+        color: white;
+        cursor: pointer;
+        margin-top: 10px;
+        transition: 0.3s;
+    }
+
+    button:hover {
+        background: #ff2424;
+    }
+
+    .switch {
+        text-align: center;
+        margin-top: 15px;
+    }
+
+    .switch a {
+        color: #ff5050;
+        text-decoration: none;
+        font-weight: bold;
+    }
+
+    .switch a:hover {
+        text-decoration: underline;
+    }
+
+</style>
+</head>
+
+<body>
+
+<header class="navbar">
+    <div class="logo">ZTA</div>
+    <nav>
+        <a href="index.html">About Me</a>
+        <a href="gallery.html">Gallery</a>
+        <a href="mission.html">Mission</a>
+        <a href="shop.html">Gear</a>
+        <a href="contact.html">Contact</a>
+    </nav>
+</header>
+
+<div class="auth-container">
+    <div class="auth-box" id="loginBox">
+        <h2>Login</h2>
+
+        <div class="input-group">
+            <label>Email or Username</label>
+            <input type="text" placeholder="Enter email or username">
+        </div>
+
+        <div class="input-group">
+            <label>Password</label>
+            <input type="password" placeholder="Enter password">
+        </div>
+
+        <button>Login</button>
+
+        <div class="switch">
+            Don't have an account? <a href="#" onclick="showSignup()">Sign Up</a>
+        </div>
+    </div>
+
+
+    <div class="auth-box" id="signupBox" style="display:none;">
+        <h2>Sign Up</h2>
+
+        <div class="input-group">
+            <label>Username</label>
+            <input type="text" placeholder="Choose a username">
+        </div>
+
+        <div class="input-group">
+            <label>Email</label>
+            <input type="email" placeholder="Enter email">
+        </div>
+
+        <div class="input-group">
+            <label>Password</label>
+            <input type="password" placeholder="Create password">
+        </div>
+
+        <button>Sign Up</button>
+
+        <div class="switch">
+            Already have an account? <a href="#" onclick="showLogin()">Login</a>
+        </div>
+    </div>
+</div>
+
+<script>
+    function showSignup() {
+        document.getElementById("loginBox").style.display = "none";
+        document.getElementById("signupBox").style.display = "block";
+    }
+
+    function showLogin() {
+        document.getElementById("signupBox").style.display = "none";
+        document.getElementById("loginBox").style.display = "block";
+    }
+</script>
+
+</body>
+</html>
