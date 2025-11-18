@@ -51,6 +51,17 @@
         cursor: pointer;
     }
 
+    .google-btn {
+        margin-top: 12px;
+        background: white;
+        color: black;
+        font-weight: bold;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 10px;
+    }
+
     .switch {
         margin-top: 15px;
         text-align: center;
@@ -74,6 +85,11 @@
         <input type="password" id="login_password" placeholder="Password">
         <button onclick="loginNow()">Login</button>
 
+        <!-- GOOGLE BUTTON -->
+        <button class="google-btn" onclick="loginGoogle()">
+            <img src="assets/google.png" width="22"> Continue with Google
+        </button>
+
         <div class="switch" onclick="showSignup()">Don't have an account? Signup</div>
     </div>
 
@@ -85,14 +101,19 @@
         <input type="password" id="signup_password" placeholder="Password">
         <button onclick="signupNow()">Create Account</button>
 
+        <button class="google-btn" onclick="loginGoogle()">
+            <img src="assets/google.png" width="22"> Signup with Google
+        </button>
+
         <div class="switch" onclick="showLogin()">Already have an account? Login</div>
     </div>
 
 </div>
 
-<!-- LOAD FIREBASE & GLOBAL -->
+<!-- LOAD FIREBASE + GLOBAL -->
 <script type="module">
-import { signupUser, loginUser } from "./global.js";
+
+import { signupUser, loginUser, googleLogin } from "./global.js";
 
 window.showSignup = function() {
     document.getElementById("loginBox").style.display = "none";
@@ -103,9 +124,8 @@ window.showLogin = function() {
     document.getElementById("loginBox").style.display = "block";
 };
 
-// -------------------------------
+
 // SIGNUP
-// -------------------------------
 window.signupNow = async function () {
     let username = document.getElementById("signup_username").value.trim();
     let email = document.getElementById("signup_email").value.trim();
@@ -126,9 +146,8 @@ window.signupNow = async function () {
     }
 };
 
-// -------------------------------
+
 // LOGIN
-// -------------------------------
 window.loginNow = async function () {
     let email = document.getElementById("login_email").value.trim();
     let password = document.getElementById("login_password").value.trim();
@@ -146,6 +165,19 @@ window.loginNow = async function () {
         alert(res.message);
     }
 };
+
+
+// GOOGLE LOGIN
+window.loginGoogle = async function () {
+    let res = await googleLogin();
+
+    if (res.status === "success") {
+        window.location.href = "dashboard.html";
+    } else {
+        alert(res.message);
+    }
+};
+
 </script>
 
 </body>
