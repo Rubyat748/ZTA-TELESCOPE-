@@ -1,1 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ZTA - Profile</title>
+
+<style>
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: Arial, sans-serif;
+    }
+
+    body {
+        background: url("assets/background.jpg") no-repeat center center fixed;
+        background-size: cover;
+        min-height: 100vh;
+        color: white;
+        overflow-x: hidden;
+    }
+
+    /* NAVBAR */
+    .navbar {
+        width: 100%;
+        padding: 25px 60px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        backdrop-filter: blur(10px);
+        background: rgba(0, 0, 0, 0.35);
+        position: sticky;
+        top: 0;
+        z-index: 999;
+    }
+
+    .logo {
+        font-size: 32px;
+        font-weight: bold;
+        letter-spacing: 3px;
+    }
+
+    nav {
+        display: flex;
+        align-items: center;
+        position: relative;
+    }
+
+    nav a {
+        margin-left: 25px;
+        text-decoration: none;
+        color: #fff;
+        font-size: 17px;
+        transition: 0.3s;
+    }
+
+    nav a:hover {
+        color: #ff5050;
+    }
+
+    .btn-login {
+        padding: 8px 18px;
+        border: 1px solid #fff;
+        border-radius: 6px;
+        margin-left: 20px;
+    }
+
+    .btn-login:hover {
+        background: #ff5050;
+    }
+
+    /* ACCOUNT DROPDOWN */
+    .account-btn {
+        margin-left: 25px;
+        cursor: pointer;
+        font-size: 17px;
+        color: white;
+        display: none;
+    }
+
+    .dropdown {
+        position: absolute;
+        top: 45px;
+        right: 0;
+        width: 160px;
+        background: rgba(0,0,0,0.7);
+        backdrop-filter: blur(12px);
+        border-radius: 8px;
+        padding: 10px 0;
+        display: none;
+        flex-direction: column;
+        opacity: 0;
+        transform: translateY(-10px);
+        transition: 0.25s ease;
+    }
+
+    .dropdown a {
+        padding: 10px 22px;
+        text-decoration: none;
+        color: white;
+        font-size: 15px;
+    }
+
+    .dropdown a:hover {
+        background: rgba(255, 80, 80, 0.35);
+    }
+
+    /* PROFILE CARD */
+    .profile-card {
+        width: 420px;
+        margin: 110px auto;
+        background: rgba(0, 0, 0, 0.55);
+        backdrop-filter: blur(10px);
+        padding: 25px;
+        border-radius: 12px;
+        box-shadow: 0 0 20px rgba(0,0,0,0.5);
+        text-align: center;
+    }
+
+    .pfp {
+        width: 120px;
+        height: 120px;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 3px solid white;
+        cursor: pointer;
+        margin-bottom: 10px;
+    }
+
+    input, textarea {
+        width: 100%;
+        padding: 12px;
+        margin-top: 8px;
+        margin-bottom: 12px;
+        border-radius: 6px;
+        border: none;
+        font-size: 16px;
+        outline: none;
+    }
+
+    textarea {
+        height: 85px;
+        resize: none;
+    }
+
+    .btn {
+        width: 100%;
+        padding: 12px;
+        background: #ff5050;
+        color: white;
+        border: none;
+        border-radius: 6px;
+        font-size: 17px;
+        cursor: pointer;
+        margin-top: 10px;
+    }
+
+    .btn:hover {
+        background: #ff2e2e;
+    }
+
+    .danger {
+        background: #d43535 !important;
+    }
+
+    .danger:hover {
+        background: #a81212 !important;
+    }
+
+</style>
+</head>
+
+<body>
+
+<header class="navbar">
+    <div class="logo">ZTA</div>
+
+    <nav>
+        <a href="index.html">About Me</a>
+        <a href="gallery.html">Gallery</a>
+        <a href="mission.html">Mission</a>
+        <a href="shop.html">Gear</a>
+        <a href="contact.html">Contact</a>
+
+        <a href="auth.html" class="btn-login" id="loginBtn">Login</a>
+
+        <span class="account-btn" id="accountBtn">Account ▼</span>
+
+        <div class="dropdown" id="dropdownMenu">
+            <a href="dashboard.html">Dashboard</a>
+            <a href="profile.html">Profile</a>
+            <a href="#" onclick="logout()">Logout</a>
+        </div>
+    </nav>
+</header>
+
+<div class="profile-card">
+
+    <img id="profilePic" class="pfp" src="assets/default-pfp.png" alt="Profile Picture" onclick="uploadPFP()">
+
+    <h2 id="profileUsername">Username</h2>
+    <p id="profileEmail" style="opacity:0.8; font-size:14px;">email@example.com</p>
+    <p style="opacity:0.7; font-size:13px;" id="createdDateText">Created: --</p>
+    <p style="opacity:0.7; font-size:13px;" id="lastLoginText">Last Login: --</p>
+
+    <textarea id="bioInput" placeholder="Write something about yourself..."></textarea>
+
+    <button class="btn" onclick="saveProfile()">Save Profile</button>
+    <button class="btn" onclick="downloadUser()">Download My Data (JSON)</button>
+    <button class="btn danger" onclick="deleteAccount()">Delete Account</button>
+
+</div>
+
+<script src="global.js"></script>
+
+</body>
+</html>
 
