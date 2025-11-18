@@ -64,12 +64,27 @@
     }
 
     .dropdown {
-        position: absolute; top: 45px; right: 0; width: 160px;
-        background: rgba(0,0,0,0.7); border-radius: 8px;
-        padding: 10px 0; display: none; flex-direction: column;
-        opacity: 0; transform: translateY(-10px); transition: 0.25s;
+        position: absolute;
+        top: 45px;
+        right: 0;
+        width: 160px;
+        background: rgba(0,0,0,0.7);
+        border-radius: 8px;
+        padding: 10px 0;
+        display: none;
+        flex-direction: column;
+        opacity: 0;
+        transform: translateY(-10px);
+        transition: 0.25s;
     }
-    .dropdown a { padding: 10px 22px; color: white; font-size: 15px; text-decoration: none; }
+
+    .dropdown a {
+        padding: 10px 22px;
+        color: white;
+        font-size: 15px;
+        text-decoration: none;
+    }
+
     .dropdown a:hover { background: rgba(255,80,80,0.3); }
 
     /* GALLERY GRID */
@@ -95,27 +110,6 @@
         transform: scale(1.03);
         border-color: #ff5050;
     }
-
-    /* UPLOAD BUTTON */
-    #uploadBox {
-        width: 90%;
-        margin: 30px auto;
-        text-align: center;
-    }
-
-    #uploadBtn {
-        padding: 12px 25px;
-        background: #ff5050;
-        border: none;
-        border-radius: 8px;
-        color: white;
-        cursor: pointer;
-        font-size: 16px;
-        transition: 0.3s;
-    }
-
-    #uploadBtn:hover { background: #ff2e2e; }
-
 </style>
 </head>
 
@@ -142,19 +136,14 @@
     </nav>
 </header>
 
-<!-- UPLOAD IMAGE -->
-<div id="uploadBox">
-    <button id="uploadBtn" onclick="uploadImage()">Upload New Photo</button>
-</div>
-
-<!-- GALLERY -->
+<!-- GALLERY ONLY -->
 <section class="gallery" id="galleryContainer">
-    <!-- Photos auto-loaded from Firebase -->
+    <!-- Auto-loaded images -->
 </section>
 
-<!-- Firebase System -->
+<!-- FIREBASE -->
 <script type="module">
-import { auth, db, storage } from "./firebase.js";
+import { auth, db } from "./firebase.js";
 
 import {
     onAuthStateChanged,
@@ -162,32 +151,20 @@ import {
 } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
 
 import {
-    ref,
-    uploadBytes,
-    getDownloadURL,
-    listAll
-} from "https://www.gstatic.com/firebasejs/11.0.1/firebase-storage.js";
-
-import {
     collection,
-    addDoc,
     getDocs,
     query,
     orderBy
 } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
 
 /* =============================
-   CHECK LOGIN
+   LOGIN STATUS
 ============================= */
-let CURRENT_USER = null;
-
 onAuthStateChanged(auth, (user) => {
     if (user) {
-        CURRENT_USER = user;
         document.getElementById("loginBtn").style.display = "none";
         document.getElementById("accountBtn").style.display = "inline-block";
     } else {
-        CURRENT_USER = null;
         document.getElementById("loginBtn").style.display = "inline-block";
         document.getElementById("accountBtn").style.display = "none";
     }
@@ -196,61 +173,28 @@ onAuthStateChanged(auth, (user) => {
 });
 
 /* =============================
-   UPLOAD IMAGE
-============================= */
-window.uploadImage = function () {
-    if (!CURRENT_USER) {
-        alert("Login required!");
-        return;
-    }
-
-    let input = document.createElement("input");
-    input.type = "file";
-    input.accept = "image/*";
-
-    input.onchange = async () => {
-        let file = input.files[0];
-
-        const storageRef = ref(storage, "gallery/" + Date.now() + ".jpg");
-        await uploadBytes(storageRef, file);
-
-        const imageURL = await getDownloadURL(storageRef);
-
-        // SAVE TO FIRESTORE
-        await addDoc(collection(db, "gallery"), {
-            url: imageURL,
-            uploadedAt: Date.now()
-        });
-
-        loadGallery();
-        alert("Photo uploaded!");
-    };
-
-    input.click();
-};
-
-/* =============================
-   LOAD GALLERY
+   LOAD GALLERY IMAGES ONLY
 ============================= */
 async function loadGallery() {
-    const galleryBox = document.getElementById("galleryContainer");
-    galleryBox.innerHTML = "Loading...";
+    const box = document.getElementById("galleryContainer");
+    box.innerHTML = "Loading...";
 
     const q = query(collection(db, "gallery"), orderBy("uploadedAt", "desc"));
     const snap = await getDocs(q);
 
-    galleryBox.innerHTML = "";
+    box.innerHTML = "";
 
-    snap.forEach((doc) => {
-        const data = doc.data();
+    snap.forEach((item) => {
+        let data = item.data();
 
         let img = document.createElement("img");
         img.src = data.url;
+
         img.onclick = () => {
-            alert("Comments coming soon!"); // you said no caption
+            alert("Comments coming soon!");
         };
 
-        galleryBox.appendChild(img);
+        box.appendChild(img);
     });
 }
 
@@ -261,7 +205,6 @@ window.logoutUser = function () {
     signOut(auth);
     window.location.href = "auth.html";
 };
-
 </script>
 
 </body>
