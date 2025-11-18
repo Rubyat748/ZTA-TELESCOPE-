@@ -2,156 +2,150 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>ZTA - Login / Signup</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <style>
     body {
+        margin: 0;
+        font-family: Arial, sans-serif;
         background: url("assets/background.jpg") no-repeat center center fixed;
         background-size: cover;
-        font-family: Arial, sans-serif;
         color: white;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        height: 100vh;
     }
 
-    .box {
-        width: 330px;
+    .container {
+        width: 360px;
+        margin: 80px auto;
         padding: 25px;
-        background: rgba(0,0,0,0.6);
-        backdrop-filter: blur(5px);
-        border-radius: 10px;
+        backdrop-filter: blur(12px);
+        background: rgba(0,0,0,0.55);
+        border-radius: 12px;
     }
 
     h2 {
         text-align: center;
-        margin-bottom: 15px;
+        margin-bottom: 25px;
     }
 
     input {
         width: 100%;
         padding: 12px;
-        margin-top: 10px;
-        border-radius: 8px;
+        margin-top: 12px;
+        border-radius: 6px;
         border: none;
-        background: rgba(255,255,255,0.1);
+        background: rgba(255,255,255,0.15);
         color: white;
-        font-size: 16px;
         outline: none;
     }
 
     button {
         width: 100%;
-        margin-top: 15px;
         padding: 12px;
+        margin-top: 18px;
+        border: none;
         background: #ff5050;
         color: white;
-        border: none;
-        border-radius: 8px;
-        font-size: 18px;
+        border-radius: 6px;
+        font-size: 16px;
         cursor: pointer;
     }
 
-    hr {
-        margin: 20px 0;
-        opacity: 0.4;
+    .switch {
+        margin-top: 15px;
+        text-align: center;
+        cursor: pointer;
+        color: #ccc;
+    }
+
+    .switch:hover {
+        color: #ff5050;
     }
 </style>
 </head>
-
 <body>
 
-<div class="box">
+<div class="container">
 
-    <h2>Login</h2>
-    <input type="text" id="login_user" placeholder="Email or Username">
-    <input type="password" id="login_pass" placeholder="Password">
-    <button onclick="loginUser()">Login</button>
+    <!-- LOGIN BOX -->
+    <div id="loginBox">
+        <h2>Login</h2>
+        <input type="text" id="login_email" placeholder="Email">
+        <input type="password" id="login_password" placeholder="Password">
+        <button onclick="loginNow()">Login</button>
 
-    <hr>
+        <div class="switch" onclick="showSignup()">Don't have an account? Signup</div>
+    </div>
 
-    <h2>Sign Up</h2>
-    <input type="text" id="signup_username" placeholder="Username">
-    <input type="email" id="signup_email" placeholder="Email">
-    <input type="password" id="signup_password" placeholder="Password">
-    <button onclick="signupUser()">Sign Up</button>
+    <!-- SIGNUP BOX -->
+    <div id="signupBox" style="display:none;">
+        <h2>Create Account</h2>
+        <input type="text" id="signup_username" placeholder="Name">
+        <input type="text" id="signup_email" placeholder="Email">
+        <input type="password" id="signup_password" placeholder="Password">
+        <button onclick="signupNow()">Create Account</button>
+
+        <div class="switch" onclick="showLogin()">Already have an account? Login</div>
+    </div>
 
 </div>
 
+<!-- LOAD FIREBASE & GLOBAL -->
+<script type="module">
+import { signupUser, loginUser } from "./global.js";
 
-<script src="global.js"></script>
+window.showSignup = function() {
+    document.getElementById("loginBox").style.display = "none";
+    document.getElementById("signupBox").style.display = "block";
+};
+window.showLogin = function() {
+    document.getElementById("signupBox").style.display = "none";
+    document.getElementById("loginBox").style.display = "block";
+};
 
-<script>
-
-// ----------------------
-// DOWNLOAD JSON FUNCTION
-// ----------------------
-function downloadJSON(data, filename) {
-    let file = new Blob([JSON.stringify(data, null, 4)], { type: "application/json" });
-
-    let a = document.createElement("a");
-    a.href = URL.createObjectURL(file);
-    a.download = filename;
-    a.click();
-
-    URL.revokeObjectURL(a.href);
-}
-
-
-
-// ----------------------
-// SIGN UP (LOCAL STORAGE)
-// ----------------------
-function signupUser() {
+// -------------------------------
+// SIGNUP
+// -------------------------------
+window.signupNow = async function () {
     let username = document.getElementById("signup_username").value.trim();
     let email = document.getElementById("signup_email").value.trim();
     let password = document.getElementById("signup_password").value.trim();
 
     if (!username || !email || !password) {
-        alert("Fill all fields!");
+        alert("All fields required!");
         return;
     }
 
-    let user = { username, email, password, profilePic: "" };
+    let res = await signupUser(username, email, password);
 
-    // Save to localStorage
-    localStorage.setItem("zta_user", JSON.stringify(user));
-
-    // Download backup JSON
-    downloadJSON(user, "zta_user.json");
-
-    alert("Sign Up Completed! Now Login.");
-    window.location.reload();
-}
-
-
-
-// ----------------------
-// LOGIN (LOCAL STORAGE)
-// ----------------------
-function loginUser() {
-    let inputUser = document.getElementById("login_user").value.trim();
-    let pass = document.getElementById("login_pass").value.trim();
-
-    let stored = localStorage.getItem("zta_user");
-
-    if (!stored) {
-        alert("No user found. Please sign up first.");
-        return;
-    }
-
-    let user = JSON.parse(stored);
-
-    if ((inputUser === user.email || inputUser === user.username) && pass === user.password) {
-        alert("Login Successful!");
-        window.location.href = "dashboard.html";  // FIXED
+    if (res.status === "success") {
+        alert("Account created!");
+        showLogin();
     } else {
-        alert("Incorrect Username/Email or Password");
+        alert(res.message);
     }
-}
+};
 
+// -------------------------------
+// LOGIN
+// -------------------------------
+window.loginNow = async function () {
+    let email = document.getElementById("login_email").value.trim();
+    let password = document.getElementById("login_password").value.trim();
+
+    if (!email || !password) {
+        alert("Enter email & password");
+        return;
+    }
+
+    let res = await loginUser(email, password);
+
+    if (res.status === "success") {
+        window.location.href = "dashboard.html";
+    } else {
+        alert(res.message);
+    }
+};
 </script>
 
 </body>
