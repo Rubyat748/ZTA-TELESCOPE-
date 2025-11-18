@@ -1,20 +1,18 @@
 /* =========================================================
-   ZTA - GLOBAL AUTH + UI SYSTEM
+   ZTA - UNIVERSAL AUTH SYSTEM
    Works for ALL pages
-   ========================================================= */
+========================================================= */
 
-// Load login state on every page
-document.addEventListener("DOMContentLoaded", function () {
-    checkLoginStatus();
+document.addEventListener("DOMContentLoaded", () => {
+    updateNavbar();
     setupDropdown();
 });
 
 /* =========================================================
-   CHECK LOGIN STATUS FOR NAVBAR
-   ========================================================= */
-function checkLoginStatus() {
+   UPDATE NAVBAR LOGIN / ACCOUNT BUTTON
+========================================================= */
+function updateNavbar() {
     let user = localStorage.getItem("zta_user");
-
     const loginBtn = document.getElementById("loginBtn");
     const accountBtn = document.getElementById("accountBtn");
 
@@ -30,71 +28,77 @@ function checkLoginStatus() {
 }
 
 /* =========================================================
-   DROPDOWN LOGIC
-   ========================================================= */
+   DROPDOWN ANIMATION
+========================================================= */
 function setupDropdown() {
-    const accountBtn = document.getElementById("accountBtn");
-    const dropdownMenu = document.getElementById("dropdownMenu");
+    const btn = document.getElementById("accountBtn");
+    const menu = document.getElementById("dropdownMenu");
 
-    if (!accountBtn || !dropdownMenu) return;
+    if (!btn || !menu) return;
 
-    accountBtn.addEventListener("click", () => {
-        if (dropdownMenu.style.display === "flex") {
-            dropdownMenu.style.opacity = "0";
-            dropdownMenu.style.transform = "translateY(-10px)";
-            setTimeout(() => (dropdownMenu.style.display = "none"), 200);
+    btn.onclick = () => {
+        if (menu.style.display === "flex") {
+            menu.style.opacity = "0";
+            menu.style.transform = "translateY(-10px)";
+            setTimeout(() => menu.style.display = "none", 200);
         } else {
-            dropdownMenu.style.display = "flex";
+            menu.style.display = "flex";
             setTimeout(() => {
-                dropdownMenu.style.opacity = "1";
-                dropdownMenu.style.transform = "translateY(0px)";
+                menu.style.opacity = "1";
+                menu.style.transform = "translateY(0)";
             }, 10);
         }
-    });
+    };
 }
 
 /* =========================================================
-   SIGNUP SYSTEM
-   ========================================================= */
-function signupUser() {
-    let username = document.getElementById("signup_username").value.trim();
-    let email = document.getElementById("signup_email").value.trim();
-    let pass = document.getElementById("signup_password").value.trim();
+   SIGNUP USER
+========================================================= */
+function signup() {
+    let username = document.getElementById("signup-username").value.trim();
+    let email = document.getElementById("signup-email").value.trim();
+    let password = document.getElementById("signup-password").value.trim();
 
-    if (username === "" || email === "" || pass === "") {
-        alert("All fields required.");
+    if (!username || !email || !password) {
+        alert("Please fill all fields.");
         return;
     }
 
-    let userObj = {
+    let user = {
         username: username,
         email: email,
-        password: pass,
-        profilePic: "",
+        password: password,
+        pfp: "",
+        bio: "",
+        created: new Date().toLocaleString(),
+        lastLogin: "--"
     };
 
-    localStorage.setItem("zta_user", JSON.stringify(userObj));
-    alert("Signup successful! You can now log in.");
+    localStorage.setItem("zta_user", JSON.stringify(user));
+    alert("Signup successful! Now log in.");
     window.location.href = "auth.html";
 }
 
 /* =========================================================
-   LOGIN SYSTEM
-   ========================================================= */
-function loginUser() {
-    let input = document.getElementById("login_user").value.trim();
-    let pass = document.getElementById("login_pass").value.trim();
+   LOGIN USER
+========================================================= */
+function login() {
+    let inputUser = document.getElementById("login-user").value.trim();
+    let pass = document.getElementById("login-pass").value.trim();
 
     let user = localStorage.getItem("zta_user");
 
     if (!user) {
-        alert("No user found. Please sign up first.");
+        alert("No account found. Please sign up first.");
         return;
     }
 
     user = JSON.parse(user);
 
-    if ((input === user.username || input === user.email) && pass === user.password) {
+    if ((inputUser === user.username || inputUser === user.email) && pass === user.password) {
+        user.lastLogin = new Date().toLocaleString();
+        localStorage.setItem("zta_user", JSON.stringify(user));
+
         alert("Login successful!");
         window.location.href = "dashboard.html";
     } else {
@@ -104,19 +108,34 @@ function loginUser() {
 
 /* =========================================================
    LOGOUT
-   ========================================================= */
+========================================================= */
 function logout() {
-    if (confirm("Logout?")) {
+    if (confirm("Are you sure you want to logout?")) {
         localStorage.removeItem("zta_user");
         window.location.href = "index.html";
     }
 }
 
 /* =========================================================
-   PROFILE PAGE: LOAD USER DATA
-   ========================================================= */
+   LOAD DASHBOARD DATA
+========================================================= */
+function loadDashboard() {
+    let user = JSON.parse(localStorage.getItem("zta_user"));
+
+    if (!user) {
+        alert("Login first!");
+        window.location.href = "auth.html";
+        return;
+    }
+
+    document.getElementById("usernameDisplay").innerText = user.username;
+}
+
+/* =========================================================
+   LOAD PROFILE PAGE
+========================================================= */
 function loadProfile() {
-    let user = localStorage.getItem("zta_user");
+    let user = JSON.parse(localStorage.getItem("zta_user"));
 
     if (!user) {
         alert("Login required!");
@@ -124,89 +143,115 @@ function loadProfile() {
         return;
     }
 
-    user = JSON.parse(user);
+    document.getElementById("profileUsername").innerText = user.username;
+    document.getElementById("profileEmail").innerText = user.email;
+    document.getElementById("bioInput").value = user.bio || "";
 
-    document.getElementById("profile_username").innerText = user.username;
-    document.getElementById("profile_email").innerText = user.email;
+    document.getElementById("createdDateText").innerText = "Created: " + user.created;
+    document.getElementById("lastLoginText").innerText = "Last Login: " + user.lastLogin;
 
-    if (user.profilePic !== "") {
-        document.getElementById("profile_pic").src = user.profilePic;
+    if (user.pfp) {
+        document.getElementById("profilePic").src = user.pfp;
     }
 }
 
 /* =========================================================
-   UPDATE PROFILE PICTURE
-   ========================================================= */
-function updateProfilePic(event) {
-    let file = event.target.files[0];
-    if (!file) return;
+   UPLOAD PROFILE PICTURE
+========================================================= */
+function uploadPFP() {
+    let input = document.createElement("input");
+    input.type = "file";
+    input.accept = "image/*";
 
-    let reader = new FileReader();
-    reader.onload = function (e) {
-        let user = JSON.parse(localStorage.getItem("zta_user"));
-        user.profilePic = e.target.result;
-        localStorage.setItem("zta_user", JSON.stringify(user));
+    input.onchange = () => {
+        let file = input.files[0];
+        let reader = new FileReader();
 
-        document.getElementById("profile_pic").src = e.target.result;
-        alert("Profile picture updated!");
+        reader.onload = function () {
+            let user = JSON.parse(localStorage.getItem("zta_user"));
+            user.pfp = reader.result;
+            localStorage.setItem("zta_user", JSON.stringify(user));
+
+            document.getElementById("profilePic").src = reader.result;
+        };
+
+        reader.readAsDataURL(file);
     };
-    reader.readAsDataURL(file);
+
+    input.click();
 }
 
 /* =========================================================
-   CHANGE PASSWORD
-   ========================================================= */
-function changePassword() {
-    let oldPass = document.getElementById("old_pass").value;
-    let newPass = document.getElementById("new_pass").value;
-
+   SAVE PROFILE DATA
+========================================================= */
+function saveProfile() {
     let user = JSON.parse(localStorage.getItem("zta_user"));
+    user.bio = document.getElementById("bioInput").value;
 
-    if (oldPass !== user.password) {
-        alert("Old password is incorrect.");
-        return;
-    }
-
-    user.password = newPass;
     localStorage.setItem("zta_user", JSON.stringify(user));
-
-    alert("Password changed!");
-    window.location.href = "dashboard.html";
+    alert("Profile saved!");
 }
 
 /* =========================================================
-   FORGOT PASSWORD
-   ========================================================= */
-function resetPassword() {
-    let email = document.getElementById("reset_email").value;
+   DOWNLOAD USER JSON
+========================================================= */
+function downloadUser() {
+    let data = localStorage.getItem("zta_user");
+    let blob = new Blob([data], {type: "application/json"});
+    let a = document.createElement("a");
 
-    let user = JSON.parse(localStorage.getItem("zta_user"));
+    a.href = URL.createObjectURL(blob);
+    a.download = "zta_user.json";
+    a.click();
+}
 
-    if (email !== user.email) {
-        alert("Email not found.");
-        return;
-    }
+/* =========================================================
+   DELETE ACCOUNT
+========================================================= */
+function deleteAccount() {
+    if (!confirm("Delete account permanently?")) return;
 
-    let newPass = prompt("Enter new password:");
-    if (!newPass) return;
-
-    user.password = newPass;
-    localStorage.setItem("zta_user", JSON.stringify(user));
-
-    alert("Password reset successful!");
+    localStorage.removeItem("zta_user");
+    alert("Account deleted.");
     window.location.href = "auth.html";
 }
 
 /* =========================================================
-   LOGIN CHECK FOR GALLERY CLICKS
-   ========================================================= */
-function needLogin() {
-    let user = localStorage.getItem("zta_user");
+   PASSWORD CHANGE
+========================================================= */
+function changePassword() {
+    let oldPass = document.getElementById("oldPass").value;
+    let newPass = document.getElementById("newPass").value;
+    let confirmPass = document.getElementById("confirmPass").value;
 
-    if (!user) {
-        alert("Login required!");
-        return false;
+    let user = JSON.parse(localStorage.getItem("zta_user"));
+
+    if (oldPass !== user.password) {
+        alert("Old password incorrect.");
+        return;
     }
 
+    if (newPass !== confirmPass) {
+        alert("New passwords do not match.");
+        return;
+    }
+
+    user.password = newPass;
+    localStorage.setItem("zta_user", JSON.stringify(user));
+
+    alert("Password updated!");
+    window.location.href = "dashboard.html";
+}
+
+/* =========================================================
+   CHECK IF LOGIN REQUIRED FOR GALLERY
+========================================================= */
+function needLogin() {
+    let user = localStorage.getItem("zta_user");
+    if (!user) {
+        alert("You must be logged in to view this!");
+        window.location.href = "auth.html";
+        return false;
+    }
     return true;
 }
