@@ -6,125 +6,41 @@
 <title>ZTA - Dashboard</title>
 
 <style>
-    * {
-        margin: 0;
-        padding: 0;
-        box-sizing: border-box;
-        font-family: Arial, sans-serif;
-    }
-
+    * { margin:0; padding:0; box-sizing:border-box; font-family:Arial; }
     body {
-        background: url("assets/background.jpg") no-repeat center center fixed;
-        background-size: cover;
-        color: white;
-        min-height: 100vh;
-        overflow-x: hidden;
+        background:url("assets/background.jpg") no-repeat center center fixed;
+        background-size:cover;
+        color:white;
+        min-height:100vh;
     }
 
-    /* NAVBAR */
     .navbar {
-        width: 100%;
-        padding: 25px 60px;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        backdrop-filter: blur(10px);
-        background: rgba(0, 0, 0, 0.35);
-        position: sticky;
-        top: 0;
-        z-index: 999;
+        width:100%; padding:25px 60px;
+        display:flex; justify-content:space-between; align-items:center;
+        background:rgba(0,0,0,0.35); backdrop-filter:blur(10px);
+        position:sticky; top:0; z-index:999;
     }
 
-    .logo {
-        font-size: 32px;
-        font-weight: bold;
-        letter-spacing: 3px;
-    }
-
-    nav {
-        display: flex;
-        align-items: center;
-        position: relative;
-    }
-
-    nav a {
-        margin-left: 25px;
-        text-decoration: none;
-        color: #fff;
-        font-size: 17px;
-        transition: 0.3s;
-    }
-
-    nav a:hover {
-        color: #ff5050;
-    }
+    nav a { margin-left:25px; color:#fff; text-decoration:none; font-size:17px; }
+    nav a:hover { color:#ff5050; }
 
     .btn-login {
-        padding: 8px 18px;
-        border: 1px solid #fff;
-        border-radius: 6px;
-        margin-left: 20px;
+        padding:8px 18px; border:1px solid white; border-radius:6px;
     }
+    .btn-login:hover { background:#ff5050; border-color:#ff5050; }
 
-    .btn-login:hover {
-        background: #ff5050;
-        border-color: #ff5050;
-    }
-
-    .account-btn {
-        margin-left: 25px;
-        cursor: pointer;
-        font-size: 17px;
-        color: white;
-        display: none;
-    }
+    .account-btn { display:none; margin-left:25px; cursor:pointer; }
 
     .dropdown {
-        position: absolute;
-        top: 45px;
-        right: 0;
-        width: 160px;
-        background: rgba(0,0,0,0.7);
-        backdrop-filter: blur(12px);
-        border-radius: 8px;
-        padding: 10px 0;
-        display: none;
-        flex-direction: column;
-        opacity: 0;
-        transform: translateY(-10px);
-        transition: 0.25s ease;
+        position:absolute; top:50px; right:0;
+        width:160px; display:none; flex-direction:column;
+        background:rgba(0,0,0,0.7); padding:10px 0; border-radius:8px;
     }
+    .dropdown a { padding:10px 20px; color:white; }
 
-    .dropdown a {
-        padding: 10px 20px;
-        text-decoration: none;
-        color: #fff;
-        font-size: 15px;
-        transition: 0.3s;
-    }
-
-    .dropdown a:hover {
-        background: rgba(255, 80, 80, 0.35);
-    }
-
-    /* CONTENT */
-    .center-box {
-        margin-top: 130px;
-        text-align: center;
-        padding: 20px;
-    }
-
-    h1 {
-        font-size: 42px;
-        text-shadow: 0 0 15px black;
-    }
-
-    p {
-        margin-top: 10px;
-        font-size: 22px;
-        opacity: 0.85;
-        text-shadow: 0 0 10px black;
-    }
+    .center-box { margin-top:140px; text-align:center; }
+    h1 { font-size:42px; text-shadow:0 0 15px black; }
+    p { margin-top:10px; font-size:20px; opacity:0.8; }
 </style>
 </head>
 
@@ -140,10 +56,10 @@
         <a href="shop.html">Gear</a>
         <a href="contact.html">Contact</a>
 
-        <a href="auth.html" class="btn-login" id="loginBtn">Login</a>
-        <span class="account-btn" id="accountBtn">Account ▼</span>
+        <a id="loginBtn" class="btn-login" href="auth.html">Login</a>
+        <span id="accountBtn" class="account-btn">Account ▼</span>
 
-        <div class="dropdown" id="dropdownMenu">
+        <div id="dropdownMenu" class="dropdown">
             <a href="dashboard.html">Dashboard</a>
             <a href="profile.html">Profile</a>
             <a href="#" onclick="logout()">Logout</a>
@@ -153,17 +69,28 @@
 
 <section class="center-box">
     <h1>Welcome, <span id="usernameDisplay">User</span>!</h1>
-    <p>Your journey begins here. Explore the universe with ZTA.</p>
+    <p>Your journey begins here.</p>
 </section>
 
 <!-- FIREBASE -->
 <script type="module">
 import { auth, db } from "./firebase.js";
-import { onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
-import { doc, getDoc } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
 
-import { checkLoginStatus, showAccountDropdown } from "./global.js";
+import {
+    onAuthStateChanged,
+    signOut
+} from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
 
+import {
+    doc,
+    getDoc
+} from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
+
+import { checkLoginStatus } from "./global.js";
+
+/* ---------------------------
+   CHECK USER LOGIN
+---------------------------- */
 onAuthStateChanged(auth, async (user) => {
     if (!user) {
         alert("Login required!");
@@ -171,18 +98,30 @@ onAuthStateChanged(auth, async (user) => {
         return;
     }
 
-    // Load username from Firestore
+    // Fetch username from Firestore
     const ref = doc(db, "users", user.uid);
     const snap = await getDoc(ref);
 
     if (snap.exists()) {
-        document.getElementById("usernameDisplay").innerText = snap.data().username;
+        document.getElementById("usernameDisplay").innerText =
+            snap.data().username || "User";
     } else {
-        document.getElementById("usernameDisplay").innerText = "User";
+        // fallback → show email prefix
+        document.getElementById("usernameDisplay").innerText =
+            user.email.split("@")[0];
     }
 
-    checkLoginStatus(); 
+    checkLoginStatus();
 });
+
+/* ---------------------------
+   LOGOUT
+---------------------------- */
+window.logout = function () {
+    signOut(auth);
+    localStorage.removeItem("zta_user");
+    window.location.href = "auth.html";
+};
 </script>
 
 </body>
