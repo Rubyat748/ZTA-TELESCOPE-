@@ -1,116 +1,182 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>ZTA – Gallery</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ZTA - Gallery</title>
 
-    <style>
-        body {
-            margin: 0;
-            font-family: Arial, sans-serif;
-            background: #0a0a0a url("background.jpg") center/cover no-repeat fixed;
-            color: white;
-            text-align: center;
-        }
+<style>
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: Arial, sans-serif;
+    }
 
-        header {
-            padding: 20px 0;
-            background: rgba(0, 0, 0, 0.6);
-            font-size: 32px;
-            font-weight: bold;
-        }
+    body {
+        background: url("assets/background.jpg") no-repeat center center fixed;
+        background-size: cover;
+        min-height: 100vh;
+        color: white;
+        overflow-x: hidden;
+    }
 
-        nav {
-            background: rgba(0, 0, 0, 0.7);
-            padding: 12px;
-        }
+    /* NAVBAR */
+    .navbar {
+        width: 100%;
+        padding: 25px 60px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        backdrop-filter: blur(10px);
+        background: rgba(0, 0, 0, 0.35);
+        position: sticky;
+        top: 0;
+        z-index: 999;
+    }
 
-        nav a {
-            color: #00eaff;
-            margin: 0 18px;
-            text-decoration: none;
-            font-size: 20px;
-        }
+    .logo {
+        font-size: 32px;
+        font-weight: bold;
+        letter-spacing: 3px;
+    }
 
-        nav a:hover {
-            color: #ffffff;
-        }
+    nav {
+        display: flex;
+        align-items: center;
+        position: relative;
+    }
 
-        .gallery-container {
-            max-width: 1000px;
-            margin: 30px auto;
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-            gap: 20px;
-            padding: 20px;
-        }
+    nav a {
+        margin-left: 25px;
+        text-decoration: none;
+        color: #fff;
+        font-size: 17px;
+        transition: 0.3s;
+    }
 
-        .gallery-item {
-            background: rgba(255, 255, 255, 0.08);
-            border-radius: 10px;
-            padding: 10px;
-            transition: 0.3s;
-        }
+    nav a:hover {
+        color: #ff5050;
+    }
 
-        .gallery-item:hover {
-            transform: scale(1.05);
-            background: rgba(255, 255, 255, 0.15);
-        }
+    .btn-login {
+        padding: 8px 18px;
+        border: 1px solid #fff;
+        border-radius: 6px;
+        margin-left: 20px;
+    }
 
-        .gallery-item img {
-            width: 100%;
-            border-radius: 10px;
-        }
+    .btn-login:hover {
+        background: #ff5050;
+    }
 
-        footer {
-            margin-top: 40px;
-            padding: 10px;
-            background: rgba(0,0,0,0.5);
-            font-size: 14px;
-        }
-    </style>
+    .account-btn {
+        margin-left: 25px;
+        cursor: pointer;
+        font-size: 17px;
+        color: white;
+        display: none;
+    }
+
+    .dropdown {
+        position: absolute;
+        top: 45px;
+        right: 0;
+        width: 160px;
+        background: rgba(0,0,0,0.7);
+        backdrop-filter: blur(12px);
+        border-radius: 8px;
+        padding: 10px 0;
+        display: none;
+        flex-direction: column;
+        opacity: 0;
+        transform: translateY(-10px);
+        transition: 0.25s ease;
+    }
+
+    .dropdown a {
+        padding: 10px 22px;
+        text-decoration: none;
+        color: white;
+        font-size: 15px;
+    }
+
+    .dropdown a:hover {
+        background: rgba(255, 80, 80, 0.35);
+    }
+
+    /* GALLERY GRID */
+    .gallery {
+        margin: 40px auto;
+        width: 90%;
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+        gap: 20px;
+    }
+
+    .gallery img {
+        width: 100%;
+        height: 180px;
+        object-fit: cover;
+        border-radius: 10px;
+        cursor: pointer;
+        border: 2px solid rgba(255,255,255,0.4);
+        transition: 0.3s;
+    }
+
+    .gallery img:hover {
+        transform: scale(1.03);
+        border-color: #ff5050;
+    }
+
+</style>
 </head>
-
 <body>
-    <header>ZTA Gallery</header>
+
+<header class="navbar">
+    <div class="logo">ZTA</div>
 
     <nav>
-        <a href="index.html">Home</a>
-        <a href="about.html">About Me</a>
-        <a href="content.html">Content</a>
-        <a href="mission.html">Mission</a>
+        <a href="index.html">About Me</a>
         <a href="gallery.html">Gallery</a>
+        <a href="mission.html">Mission</a>
+        <a href="shop.html">Gear</a>
+        <a href="contact.html">Contact</a>
+
+        <a href="auth.html" class="btn-login" id="loginBtn">Login</a>
+
+        <span class="account-btn" id="accountBtn">Account ▼</span>
+
+        <div class="dropdown" id="dropdownMenu">
+            <a href="dashboard.html">Dashboard</a>
+            <a href="profile.html">Profile</a>
+            <a href="#" onclick="logout()">Logout</a>
+        </div>
     </nav>
+</header>
 
-    <h2>My Photos & Creations</h2>
+<section class="gallery">
+    <!-- You can add as many images as you want -->
+    <img src="assets/gallery1.jpg" onclick="needLogin()">
+    <img src="assets/gallery2.jpg" onclick="needLogin()">
+    <img src="assets/gallery3.jpg" onclick="needLogin()">
+    <img src="assets/gallery4.jpg" onclick="needLogin()">
+    <img src="assets/gallery5.jpg" onclick="needLogin()">
+    <img src="assets/gallery6.jpg" onclick="needLogin()">
+</section>
 
-    <div class="gallery-container">
-        <div class="gallery-item">
-            <img src="gallery/img1.jpg" alt="Gallery Image 1">
-        </div>
+<script src="global.js"></script>
 
-        <div class="gallery-item">
-            <img src="gallery/img2.jpg" alt="Gallery Image 2">
-        </div>
+<script>
+function needLogin() {
+    // show alert only - no opening the image
+    let user = localStorage.getItem("zta_user");
+    if (!user) {
+        alert("Login required!");
+        return;
+    }
+}
+</script>
 
-        <div class="gallery-item">
-            <img src="gallery/img3.jpg" alt="Gallery Image 3">
-        </div>
-
-        <div class="gallery-item">
-            <img src="gallery/img4.jpg" alt="Gallery Image 4">
-        </div>
-
-        <div class="gallery-item">
-            <img src="gallery/img5.jpg" alt="Gallery Image 5">
-        </div>
-
-        <div class="gallery-item">
-            <img src="gallery/img6.jpg" alt="Gallery Image 6">
-        </div>
-    </div>
-
-    <footer>© 2025 ZTA – All Rights Reserved</footer>
 </body>
 </html>
