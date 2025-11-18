@@ -6,72 +6,177 @@
 <title>ZTA - Gallery</title>
 
 <style>
-    *{margin:0;padding:0;box-sizing:border-box;font-family:Arial;}
-    body{
-        background:url("assets/background.jpg") no-repeat center center fixed;
-        background-size:cover;
-        color:white;
-        min-height:100vh;
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: Arial, sans-serif;
+    }
+
+    body {
+        background: url("assets/background.jpg") no-repeat center center fixed;
+        background-size: cover;
+        min-height: 100vh;
+        color: white;
+        overflow-x: hidden;
     }
 
     /* NAVBAR */
-    .navbar{
-        width:100%;
-        padding:25px 60px;
-        display:flex;
-        justify-content:space-between;
-        align-items:center;
-        backdrop-filter:blur(10px);
-        background:rgba(0,0,0,0.35);
-        position:sticky;top:0;z-index:999;
+    .navbar {
+        width: 100%;
+        padding: 25px 60px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        backdrop-filter: blur(10px);
+        background: rgba(0, 0, 0, 0.35);
+        position: sticky;
+        top: 0;
+        z-index: 999;
     }
-    .logo{font-size:32px;font-weight:bold;letter-spacing:3px;}
-    nav a{
-        margin-left:25px;color:white;text-decoration:none;font-size:17px;
+
+    .logo {
+        font-size: 32px;
+        font-weight: bold;
+        letter-spacing: 3px;
     }
-    nav a:hover{color:#ff5050;}
+
+    nav a {
+        margin-left: 25px;
+        text-decoration: none;
+        color: #fff;
+        font-size: 17px;
+        transition: 0.3s;
+    }
+
+    nav a:hover {
+        color: #ff5050;
+    }
+
+    .btn-login {
+        padding: 8px 18px;
+        border: 1px solid #fff;
+        border-radius: 6px;
+        margin-left: 20px;
+    }
+
+    .btn-login:hover {
+        background: #ff5050;
+    }
+
+    .account-btn {
+        margin-left: 25px;
+        cursor: pointer;
+        font-size: 17px;
+        color: white;
+        display: none;
+    }
 
     /* GALLERY GRID */
-    .gallery{
-        margin:40px auto;width:90%;
-        display:grid;
-        grid-template-columns:repeat(auto-fill,minmax(220px,1fr));
-        gap:20px;
-    }
-    .gallery img{
-        width:100%;height:200px;object-fit:cover;border-radius:10px;
-        cursor:pointer;border:2px solid rgba(255,255,255,0.4);
-        transition:.3s;
-    }
-    .gallery img:hover{transform:scale(1.03);border-color:#ff5050;}
-
-    /* POPUP */
-    .popup-bg{
-        position:fixed;top:0;left:0;width:100%;height:100%;
-        background:rgba(0,0,0,0.8);
-        display:none;justify-content:center;align-items:center;
-        padding:20px;
-    }
-    .popup{
-        width:90%;max-width:600px;background:rgba(0,0,0,0.85);
-        border-radius:12px;padding:15px;
-    }
-    .popup img{width:100%;border-radius:10px;}
-
-    .like-btn{cursor:pointer;font-size:20px;margin-top:10px;}
-
-    .comments-box{
-        max-height:170px;overflow-y:auto;margin-top:10px;padding-right:10px;
-    }
-    .comment-item{
-        padding:6px;border-bottom:1px solid rgba(255,255,255,0.2);
+    .gallery {
+        margin: 40px auto;
+        width: 90%;
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+        gap: 20px;
     }
 
-    .close-btn{
-        margin-top:10px;width:100%;padding:10px;
-        background:#ff5050;border:none;border-radius:6px;
-        color:white;font-size:16px;cursor:pointer;
+    .gallery img {
+        width: 100%;
+        height: 180px;
+        object-fit: cover;
+        border-radius: 10px;
+        cursor: pointer;
+        border: 2px solid rgba(255,255,255,0.4);
+        transition: 0.3s;
     }
+
+    .gallery img:hover {
+        transform: scale(1.03);
+        border-color: #ff5050;
+    }
+
+    /* POPUP VIEW */
+    #popupBG {
+        display: none;
+        position: fixed;
+        inset: 0;
+        background: rgba(0,0,0,0.85);
+        backdrop-filter: blur(5px);
+        justify-content: center;
+        align-items: center;
+        padding: 20px;
+        z-index: 9999;
+    }
+
+    #popupBox {
+        background: rgba(20,20,20,0.8);
+        padding: 20px;
+        border-radius: 12px;
+        max-width: 850px;
+        width: 100%;
+        color: white;
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+    }
+
+    #popupImg {
+        width: 100%;
+        border-radius: 10px;
+        object-fit: contain;
+    }
+
+    .like-row {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        font-size: 18px;
+    }
+
+    .like-btn {
+        background: #ff5050;
+        padding: 8px 14px;
+        border-radius: 6px;
+        cursor: pointer;
+        border: none;
+        color: white;
+    }
+
+    .comment-box {
+        background: rgba(40,40,40,0.7);
+        padding: 12px;
+        border-radius: 8px;
+        max-height: 200px;
+        overflow-y: auto;
+    }
+
+    .comment-item {
+        padding: 6px;
+        border-bottom: 1px solid rgba(255,255,255,0.1);
+        font-size: 14px;
+    }
+
+    #commentInput {
+        width: 100%;
+        padding: 10px;
+        border-radius: 6px;
+        border: none;
+        background: rgba(255,255,255,0.15);
+        color: white;
+        margin-top: 10px;
+    }
+
+    #closeBtn {
+        background: #ff3030;
+        padding: 10px;
+        border: none;
+        border-radius: 6px;
+        color: white;
+        cursor: pointer;
+        margin-top: 10px;
+    }
+
 </style>
 </head>
 
@@ -79,113 +184,48 @@
 
 <header class="navbar">
     <div class="logo">ZTA</div>
+
     <nav>
         <a href="index.html">About Me</a>
         <a href="gallery.html">Gallery</a>
         <a href="mission.html">Mission</a>
         <a href="shop.html">Gear</a>
         <a href="contact.html">Contact</a>
-        <a href="auth.html" class="btn-login">Login</a>
+
+        <a href="auth.html" class="btn-login" id="loginBtn">Login</a>
+        <span class="account-btn" id="accountBtn">Account ▼</span>
+
+        <div class="dropdown" id="dropdownMenu">
+            <a href="dashboard.html">Dashboard</a>
+            <a href="profile.html">Profile</a>
+            <a href="#" onclick="logout()">Logout</a>
+        </div>
     </nav>
 </header>
 
 <section class="gallery" id="gallery"></section>
 
 <!-- POPUP -->
-<div class="popup-bg" id="popupBG">
-    <div class="popup">
+<div id="popupBG">
+    <div id="popupBox">
         <img id="popupImg">
 
-        <span class="like-btn" onclick="toggleLike()">❤️ 
-            <span id="likeCount">0</span>
-        </span>
+        <div class="like-row">
+            <button class="like-btn" onclick="toggleLike()">❤️ Like</button>
+            <span>Likes: <span id="likeCount">0</span></span>
+        </div>
 
-        <div class="comments-box" id="commentsBox"></div>
+        <div class="comment-box" id="commentsBox"></div>
 
-        <input type="text" id="commentInput" placeholder="Add comment..." style="width:100%;padding:7px;margin-top:10px;">
-        <button onclick="addComment()" class="close-btn">Add Comment</button>
-        <button class="close-btn" onclick="closePopup()">Close</button>
+        <input id="commentInput" placeholder="Write a comment..." />
+        <button class="like-btn" onclick="addComment()">Post Comment</button>
+
+        <button id="closeBtn" onclick="closePopup()">Close</button>
     </div>
 </div>
 
-<script>
-let photos = [];
-let currentIndex = 0;
-
-// AUTO LOAD IMAGES FROM assets/gallery
-async function loadImages() {
-    // MANUAL PATTERN (works on all static hosting)
-    for (let i = 1; i <= 200; i++) {
-        let path = `assets/gallery/photo${i}.jpg`;
-
-        let exists = await fetch(path, { method: "HEAD" }).then(r => r.ok).catch(() => false);
-        if (exists) photos.push({ src: path, likes: 0, comments: [] });
-    }
-
-    renderGallery();
-}
-
-// RENDER GALLERY
-function renderGallery() {
-    const gallery = document.getElementById("gallery");
-    gallery.innerHTML = "";
-
-    photos.forEach((pic, i) => {
-        let img = document.createElement("img");
-        img.src = pic.src;
-        img.onclick = () => openPopup(i);
-        gallery.appendChild(img);
-    });
-}
-
-loadImages();
-
-// OPEN POPUP
-function openPopup(i){
-    currentIndex = i;
-
-    document.getElementById("popupImg").src = photos[i].src;
-    document.getElementById("likeCount").innerText = photos[i].likes;
-
-    loadComments();
-
-    document.getElementById("popupBG").style.display = "flex";
-}
-
-// CLOSE POPUP
-function closePopup(){
-    document.getElementById("popupBG").style.display = "none";
-}
-
-// LIKE
-function toggleLike(){
-    photos[currentIndex].likes++;
-    document.getElementById("likeCount").innerText = photos[currentIndex].likes;
-}
-
-// LOAD COMMENTS
-function loadComments(){
-    let box = document.getElementById("commentsBox");
-    box.innerHTML = "";
-
-    photos[currentIndex].comments.forEach(c=>{
-        let div = document.createElement("div");
-        div.className="comment-item";
-        div.innerText=c;
-        box.appendChild(div);
-    });
-}
-
-// ADD COMMENT
-function addComment(){
-    let text = document.getElementById("commentInput").value.trim();
-    if(!text) return;
-
-    photos[currentIndex].comments.push(text);
-    document.getElementById("commentInput").value="";
-    loadComments();
-}
-</script>
+<script src="global.js"></script>
+<script src="app.js"></script>
 
 </body>
 </html>
