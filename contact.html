@@ -6,19 +6,14 @@
 <title>ZTA - Contact</title>
 
 <style>
-    * {
-        margin: 0;
-        padding: 0;
-        box-sizing: border-box;
-        font-family: Arial, sans-serif;
-    }
+    * { margin: 0; padding: 0; box-sizing: border-box; font-family: Arial, sans-serif; }
 
     body {
         background: url("assets/background.jpg") no-repeat center center fixed;
         background-size: cover;
         color: white;
-        overflow-x: hidden;
         min-height: 100vh;
+        overflow-x: hidden;
     }
 
     /* NAVBAR */
@@ -43,12 +38,14 @@
 
     nav {
         display: flex;
+        align-items: center;
         gap: 25px;
+        position: relative;
     }
 
     nav a {
-        text-decoration: none;
         color: white;
+        text-decoration: none;
         font-size: 17px;
         transition: .3s;
     }
@@ -57,9 +54,51 @@
         color: #ff5050;
     }
 
+    .btn-login {
+        padding: 8px 18px;
+        border: 1px solid white;
+        border-radius: 6px;
+    }
+
+    .btn-login:hover {
+        background: #ff5050;
+        border-color: #ff5050;
+    }
+
+    .account-btn {
+        cursor: pointer;
+        display: none;
+    }
+
+    /* DROPDOWN MENU */
+    .dropdown {
+        position: absolute;
+        right: 0;
+        top: 45px;
+        width: 160px;
+        background: rgba(0,0,0,0.75);
+        border-radius: 8px;
+        display: none;
+        flex-direction: column;
+        padding: 10px 0;
+        opacity: 0;
+        transform: translateY(-10px);
+        transition: 0.25s ease;
+    }
+
+    .dropdown a {
+        padding: 10px 20px;
+        font-size: 15px;
+        color: white;
+        text-decoration: none;
+    }
+
+    .dropdown a:hover {
+        background: rgba(255,80,80,0.35);
+    }
+
     /* CONTACT FORM */
     .contact-wrapper {
-        width: 100%;
         display: flex;
         justify-content: center;
         padding: 80px 20px;
@@ -79,8 +118,8 @@
 
     .contact-box p {
         font-size: 18px;
-        margin-bottom: 40px;
         color: #ddd;
+        margin-bottom: 40px;
     }
 
     form {
@@ -97,12 +136,11 @@
     input, textarea {
         width: 100%;
         padding: 15px;
-        background: rgba(30, 30, 30, 0.65);
+        background: rgba(30, 30, 30, 0.6);
         border: 1px solid #444;
         border-radius: 6px;
         color: white;
         font-size: 16px;
-        outline: none;
     }
 
     textarea {
@@ -113,10 +151,10 @@
     button {
         padding: 14px;
         background: rgba(255,255,255,0.25);
-        border: none;
         border-radius: 6px;
         color: white;
         font-size: 18px;
+        border: none;
         cursor: pointer;
         transition: 0.3s;
     }
@@ -138,6 +176,18 @@
         <a href="mission.html">Mission</a>
         <a href="shop.html">Gear</a>
         <a href="contact.html">Contact</a>
+
+        <!-- LOGIN BUTTON -->
+        <a id="loginBtn" class="btn-login" href="auth.html">Login</a>
+
+        <!-- ACCOUNT DROPDOWN -->
+        <span id="accountBtn" class="account-btn">Account ▼</span>
+
+        <div id="dropdownMenu" class="dropdown">
+            <a href="dashboard.html">Dashboard</a>
+            <a href="profile.html">Profile</a>
+            <a href="#" onclick="logoutUser()">Logout</a>
+        </div>
     </nav>
 </header>
 
@@ -146,16 +196,12 @@
         <h1>WANT TO GET IN TOUCH?</h1>
         <p>Send me a message and I will get back to you soon.</p>
 
-        <!-- FORM SUBMIT FORM -->
+        <!-- FORM SUBMIT -->
         <form action="https://formsubmit.co/zeroxtheastrophotograper@gmail.com" method="POST">
 
-            <!-- Disable Captcha -->
             <input type="hidden" name="_captcha" value="false">
-
-            <!-- Redirect To Custom Success Page -->
             <input type="hidden" name="_next" value="success.html">
 
-            <!-- Form Fields -->
             <div class="input-row">
                 <input type="text" name="first_name" placeholder="First name" required>
                 <input type="text" name="last_name" placeholder="Last name">
@@ -169,6 +215,8 @@
         </form>
     </div>
 </section>
+
+<script src="global.js"></script>
 
 </body>
 </html>
