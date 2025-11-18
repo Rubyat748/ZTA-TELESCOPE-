@@ -6,167 +6,58 @@
 <title>ZTA - Profile</title>
 
 <style>
-    * {
-        margin: 0;
-        padding: 0;
-        box-sizing: border-box;
-        font-family: Arial, sans-serif;
-    }
-
+    * { margin: 0; padding: 0; box-sizing: border-box; font-family: Arial, sans-serif; }
     body {
         background: url("assets/background.jpg") no-repeat center center fixed;
         background-size: cover;
-        min-height: 100vh;
-        color: white;
-        overflow-x: hidden;
+        min-height: 100vh; color: white; overflow-x: hidden;
     }
 
     /* NAVBAR */
-    .navbar {
-        width: 100%;
-        padding: 25px 60px;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        backdrop-filter: blur(10px);
-        background: rgba(0, 0, 0, 0.35);
-        position: sticky;
-        top: 0;
-        z-index: 999;
+    .navbar { width: 100%; padding: 25px 60px; display: flex; justify-content: space-between;
+        align-items: center; backdrop-filter: blur(10px); background: rgba(0,0,0,0.35);
+        position: sticky; top: 0; z-index: 999;
     }
-
-    .logo {
-        font-size: 32px;
-        font-weight: bold;
-        letter-spacing: 3px;
-    }
-
-    nav {
-        display: flex;
-        align-items: center;
-        position: relative;
-    }
-
-    nav a {
-        margin-left: 25px;
-        text-decoration: none;
-        color: #fff;
-        font-size: 17px;
-        transition: 0.3s;
-    }
-
-    nav a:hover {
-        color: #ff5050;
-    }
-
-    .btn-login {
-        padding: 8px 18px;
-        border: 1px solid #fff;
-        border-radius: 6px;
-        margin-left: 20px;
-    }
-
-    .btn-login:hover {
-        background: #ff5050;
-    }
-
-    /* ACCOUNT DROPDOWN */
-    .account-btn {
-        margin-left: 25px;
-        cursor: pointer;
-        font-size: 17px;
-        color: white;
-        display: none;
-    }
-
+    .logo { font-size: 32px; font-weight: bold; letter-spacing: 3px; }
+    nav { display: flex; align-items: center; position: relative; }
+    nav a { margin-left: 25px; text-decoration: none; color: #fff; font-size: 17px; transition: 0.3s; }
+    nav a:hover { color: #ff5050; }
+    .btn-login { padding: 8px 18px; border: 1px solid #fff; border-radius: 6px; margin-left: 20px; }
+    .btn-login:hover { background: #ff5050; }
+    .account-btn { margin-left: 25px; cursor: pointer; font-size: 17px; color: white; display: none; }
     .dropdown {
-        position: absolute;
-        top: 45px;
-        right: 0;
-        width: 160px;
-        background: rgba(0,0,0,0.7);
-        backdrop-filter: blur(12px);
-        border-radius: 8px;
-        padding: 10px 0;
-        display: none;
-        flex-direction: column;
-        opacity: 0;
-        transform: translateY(-10px);
-        transition: 0.25s ease;
+        position: absolute; top: 45px; right: 0; width: 160px; background: rgba(0,0,0,0.7);
+        backdrop-filter: blur(12px); border-radius: 8px; padding: 10px 0; display: none;
+        flex-direction: column; opacity: 0; transform: translateY(-10px); transition: .25s;
     }
-
-    .dropdown a {
-        padding: 10px 22px;
-        text-decoration: none;
-        color: white;
-        font-size: 15px;
-    }
-
-    .dropdown a:hover {
-        background: rgba(255, 80, 80, 0.35);
-    }
+    .dropdown a { padding: 10px 22px; text-decoration: none; color: white; font-size: 15px; }
+    .dropdown a:hover { background: rgba(255, 80, 80, 0.35); }
 
     /* PROFILE CARD */
     .profile-card {
-        width: 420px;
-        margin: 110px auto;
-        background: rgba(0, 0, 0, 0.55);
-        backdrop-filter: blur(10px);
-        padding: 25px;
-        border-radius: 12px;
-        box-shadow: 0 0 20px rgba(0,0,0,0.5);
-        text-align: center;
+        width: 420px; margin: 110px auto; background: rgba(0,0,0,0.55); backdrop-filter: blur(10px);
+        padding: 25px; border-radius: 12px; text-align: center;
     }
 
     .pfp {
-        width: 120px;
-        height: 120px;
-        border-radius: 50%;
-        object-fit: cover;
-        border: 3px solid white;
-        cursor: pointer;
-        margin-bottom: 10px;
+        width: 120px; height: 120px; border-radius: 50%; object-fit: cover;
+        border: 3px solid white; cursor: pointer; margin-bottom: 10px;
     }
 
     input, textarea {
-        width: 100%;
-        padding: 12px;
-        margin-top: 8px;
-        margin-bottom: 12px;
-        border-radius: 6px;
-        border: none;
-        font-size: 16px;
-        outline: none;
+        width: 100%; padding: 12px; margin-top: 8px; margin-bottom: 12px;
+        border-radius: 6px; border: none; font-size: 16px; outline: none;
     }
-
-    textarea {
-        height: 85px;
-        resize: none;
-    }
+    textarea { height: 85px; resize: none; }
 
     .btn {
-        width: 100%;
-        padding: 12px;
-        background: #ff5050;
-        color: white;
-        border: none;
-        border-radius: 6px;
-        font-size: 17px;
-        cursor: pointer;
-        margin-top: 10px;
+        width: 100%; padding: 12px; background: #ff5050; color: white;
+        border: none; border-radius: 6px; font-size: 17px; cursor: pointer; margin-top: 10px;
     }
+    .btn:hover { background: #ff2e2e; }
 
-    .btn:hover {
-        background: #ff2e2e;
-    }
-
-    .danger {
-        background: #d43535 !important;
-    }
-
-    .danger:hover {
-        background: #a81212 !important;
-    }
+    .danger { background: #d43535 !important; }
+    .danger:hover { background: #a81212 !important; }
 </style>
 </head>
 
@@ -183,13 +74,12 @@
         <a href="contact.html">Contact</a>
 
         <a href="auth.html" class="btn-login" id="loginBtn">Login</a>
-
         <span class="account-btn" id="accountBtn">Account ▼</span>
 
         <div class="dropdown" id="dropdownMenu">
             <a href="dashboard.html">Dashboard</a>
             <a href="profile.html">Profile</a>
-            <a href="#" onclick="logout()">Logout</a>
+            <a href="#" onclick="logoutUser()">Logout</a>
         </div>
     </nav>
 </header>
@@ -211,97 +101,128 @@
 
 </div>
 
-<script src="global.js"></script>
-<script>
-/* -----------------------------
-   LOAD USER DATA
--------------------------------- */
-document.addEventListener("DOMContentLoaded", () => {
-    let user = JSON.parse(localStorage.getItem("zta_user"));
+<!-- FIREBASE -->
+<script type="module">
 
+import { auth, db, storage } from "./firebase.js";
+import { 
+    onAuthStateChanged, 
+    updateProfile, 
+    deleteUser,
+    signOut 
+} from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
+
+import { 
+    doc, 
+    getDoc, 
+    updateDoc 
+} from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
+
+import { 
+    ref, 
+    uploadBytes, 
+    getDownloadURL 
+} from "https://www.gstatic.com/firebasejs/11.0.1/firebase-storage.js";
+
+/* ==========================
+   LOAD USER DATA
+========================== */
+onAuthStateChanged(auth, async (user) => {
     if (!user) {
-        alert("You must login first!");
+        alert("Login required!");
         window.location.href = "auth.html";
         return;
     }
 
-    document.getElementById("profileUsername").textContent = user.username;
-    document.getElementById("profileEmail").textContent = user.email;
-    document.getElementById("bioInput").value = user.bio || "";
+    document.getElementById("profileEmail").innerText = user.email;
 
-    document.getElementById("createdDateText").textContent = "Created: " + (user.created || "--");
-    document.getElementById("lastLoginText").textContent = "Last Login: " + (user.lastLogin || "--");
+    const userRef = doc(db, "users", user.uid);
+    const snap = await getDoc(userRef);
 
-    // Profile picture
-    if (user.pfp) {
-        document.getElementById("profilePic").src = user.pfp;
+    if (snap.exists()) {
+        let data = snap.data();
+        document.getElementById("profileUsername").innerText = data.username;
+        document.getElementById("bioInput").value = data.bio || "";
+        document.getElementById("createdDateText").innerText = "Created: " + (data.created || "--");
+        document.getElementById("lastLoginText").innerText = "Last Login: " + (data.lastLogin || "--");
+
+        if (data.pfpUrl) {
+            document.getElementById("profilePic").src = data.pfpUrl;
+        }
     }
 });
 
-/* -----------------------------
-   UPLOAD PROFILE PICTURE
--------------------------------- */
-function uploadPFP() {
+/* ==========================
+   UPLOAD PFP
+========================== */
+window.uploadPFP = function () {
     let input = document.createElement("input");
     input.type = "file";
     input.accept = "image/*";
 
-    input.onchange = function () {
+    input.onchange = async () => {
         let file = input.files[0];
-        let reader = new FileReader();
+        const user = auth.currentUser;
 
-        reader.onload = function () {
-            let base64 = reader.result;
+        const storageRef = ref(storage, "pfp/" + user.uid + ".jpg");
+        await uploadBytes(storageRef, file);
 
-            let user = JSON.parse(localStorage.getItem("zta_user"));
-            user.pfp = base64;
-            localStorage.setItem("zta_user", JSON.stringify(user));
+        const url = await getDownloadURL(storageRef);
 
-            document.getElementById("profilePic").src = base64;
-        };
+        await updateDoc(doc(db, "users", user.uid), { pfpUrl: url });
 
-        reader.readAsDataURL(file);
+        document.getElementById("profilePic").src = url;
+        alert("Profile picture updated!");
     };
 
     input.click();
-}
+};
 
-/* -----------------------------
+/* ==========================
    SAVE PROFILE
--------------------------------- */
-function saveProfile() {
-    let user = JSON.parse(localStorage.getItem("zta_user"));
+========================== */
+window.saveProfile = async function () {
+    const user = auth.currentUser;
+    const bio = document.getElementById("bioInput").value;
 
-    user.bio = document.getElementById("bioInput").value;
+    await updateDoc(doc(db, "users", user.uid), { bio: bio });
+    alert("Profile updated!");
+};
 
-    localStorage.setItem("zta_user", JSON.stringify(user));
-
-    alert("Profile Saved!");
-}
-
-/* -----------------------------
+/* ==========================
    DOWNLOAD USER DATA
--------------------------------- */
-function downloadUser() {
-    let user = localStorage.getItem("zta_user");
+========================== */
+window.downloadUser = async function () {
+    const user = auth.currentUser;
+    const snap = await getDoc(doc(db, "users", user.uid));
 
-    let blob = new Blob([user], {type: "application/json"});
-    let a = document.createElement("a");
+    const blob = new Blob([JSON.stringify(snap.data(), null, 2)], { type: "application/json" });
+    const a = document.createElement("a");
     a.href = URL.createObjectURL(blob);
     a.download = "zta_user.json";
     a.click();
-}
+};
 
-/* -----------------------------
+/* ==========================
    DELETE ACCOUNT
--------------------------------- */
-function deleteAccount() {
-    if (confirm("Are you sure you want to delete your account?")) {
-        localStorage.removeItem("zta_user");
-        alert("Account deleted.");
-        window.location.href = "auth.html";
-    }
-}
+========================== */
+window.deleteAccount = async function () {
+    if (!confirm("Delete account permanently?")) return;
+
+    const user = auth.currentUser;
+    await deleteUser(user);
+
+    alert("Account deleted.");
+    window.location.href = "auth.html";
+};
+
+/* ==========================
+   LOGOUT
+========================== */
+window.logoutUser = function () {
+    signOut(auth);
+    window.location.href = "auth.html";
+};
 </script>
 
 </body>
