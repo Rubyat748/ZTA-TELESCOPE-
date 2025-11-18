@@ -5,9 +5,6 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>ZTA - Contact</title>
 
-<!-- EmailJS Script -->
-<script src="https://cdn.jsdelivr.net/npm/emailjs-com@2/dist/email.min.js"></script>
-
 <style>
     * {
         margin: 0;
@@ -24,6 +21,7 @@
         min-height: 100vh;
     }
 
+    /* NAVBAR */
     .navbar {
         width: 100%;
         padding: 25px 60px;
@@ -31,7 +29,7 @@
         justify-content: space-between;
         align-items: center;
         backdrop-filter: blur(10px);
-        background: rgba(0, 0, 0, 0.35);
+        background: rgba(0,0,0,0.35);
         position: sticky;
         top: 0;
         z-index: 999;
@@ -54,7 +52,7 @@
         text-decoration: none;
         color: #fff;
         font-size: 17px;
-        transition: .3s;
+        transition: 0.3s;
     }
 
     nav a:hover {
@@ -104,9 +102,10 @@
     }
 
     .dropdown a:hover {
-        background: rgba(255, 80, 80, 0.35);
+        background: rgba(255,80,80,0.35);
     }
 
+    /* CONTACT FORM */
     .contact-wrapper {
         width: 100%;
         display: flex;
@@ -153,7 +152,6 @@
         color: white;
         font-size: 16px;
         outline: none;
-        backdrop-filter: blur(4px);
     }
 
     textarea {
@@ -164,7 +162,7 @@
     button {
         margin-top: 10px;
         padding: 14px;
-        background: rgba(255, 255, 255, 0.25);
+        background: rgba(255,255,255,0.25);
         border: none;
         border-radius: 6px;
         color: white;
@@ -176,7 +174,6 @@
     button:hover {
         background: #ff5050;
     }
-
 </style>
 </head>
 
@@ -206,7 +203,7 @@
 <section class="contact-wrapper">
     <div class="contact-box">
         <h1>WANT TO GET IN TOUCH?</h1>
-        <p>Feel free to send me a message and I’ll get back to you as soon as possible.</p>
+        <p>Feel free to send me a message and I’ll reply as soon as possible.</p>
 
         <form id="contactForm">
             <div class="input-row">
@@ -215,6 +212,7 @@
             </div>
 
             <input type="email" id="email" placeholder="Your email">
+
             <textarea id="message" placeholder="Your message"></textarea>
 
             <button type="button" onclick="sendMessage()">Send Message</button>
@@ -224,34 +222,41 @@
 
 <script src="global.js"></script>
 
+<!-- EMAILJS SCRIPT -->
+<script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
+
 <script>
-// Initialize EmailJS
-emailjs.init("p1-aDbZd6817VN_Aq");
+emailjs.init("p1-aDbZd6817VN_Aq");  // your public key
 
 function sendMessage() {
     let first = document.getElementById("firstName").value.trim();
     let last = document.getElementById("lastName").value.trim();
     let email = document.getElementById("email").value.trim();
-    let msg   = document.getElementById("message").value.trim();
+    let msg = document.getElementById("message").value.trim();
 
     if (!first || !email || !msg) {
-        alert("Please enter at least your name, email and message.");
+        alert("Please fill all required fields.");
         return;
     }
 
+    let fullName = first + " " + last;
+    let title = "New Contact Message";
+    let time = new Date().toLocaleString();
+
     emailjs.send("service_x1yd9nn", "template_s3tg0y1", {
-        from_name: first,
-        from_last: last,
-        from_email: email,
-        message: msg
+        name: fullName,
+        title: title,
+        time: time,
+        message: msg,
+        email: email
     })
     .then(() => {
-        alert("Message sent successfully!");
+        alert("Message Sent Successfully!");
         document.getElementById("contactForm").reset();
     })
-    .catch((err) => {
+    .catch(err => {
+        console.error(err);
         alert("Failed to send message.");
-        console.log(err);
     });
 }
 </script>
