@@ -167,7 +167,6 @@
     .danger:hover {
         background: #a81212 !important;
     }
-
 </style>
 </head>
 
@@ -213,7 +212,97 @@
 </div>
 
 <script src="global.js"></script>
+<script>
+/* -----------------------------
+   LOAD USER DATA
+-------------------------------- */
+document.addEventListener("DOMContentLoaded", () => {
+    let user = JSON.parse(localStorage.getItem("zta_user"));
+
+    if (!user) {
+        alert("You must login first!");
+        window.location.href = "auth.html";
+        return;
+    }
+
+    document.getElementById("profileUsername").textContent = user.username;
+    document.getElementById("profileEmail").textContent = user.email;
+    document.getElementById("bioInput").value = user.bio || "";
+
+    document.getElementById("createdDateText").textContent = "Created: " + (user.created || "--");
+    document.getElementById("lastLoginText").textContent = "Last Login: " + (user.lastLogin || "--");
+
+    // Profile picture
+    if (user.pfp) {
+        document.getElementById("profilePic").src = user.pfp;
+    }
+});
+
+/* -----------------------------
+   UPLOAD PROFILE PICTURE
+-------------------------------- */
+function uploadPFP() {
+    let input = document.createElement("input");
+    input.type = "file";
+    input.accept = "image/*";
+
+    input.onchange = function () {
+        let file = input.files[0];
+        let reader = new FileReader();
+
+        reader.onload = function () {
+            let base64 = reader.result;
+
+            let user = JSON.parse(localStorage.getItem("zta_user"));
+            user.pfp = base64;
+            localStorage.setItem("zta_user", JSON.stringify(user));
+
+            document.getElementById("profilePic").src = base64;
+        };
+
+        reader.readAsDataURL(file);
+    };
+
+    input.click();
+}
+
+/* -----------------------------
+   SAVE PROFILE
+-------------------------------- */
+function saveProfile() {
+    let user = JSON.parse(localStorage.getItem("zta_user"));
+
+    user.bio = document.getElementById("bioInput").value;
+
+    localStorage.setItem("zta_user", JSON.stringify(user));
+
+    alert("Profile Saved!");
+}
+
+/* -----------------------------
+   DOWNLOAD USER DATA
+-------------------------------- */
+function downloadUser() {
+    let user = localStorage.getItem("zta_user");
+
+    let blob = new Blob([user], {type: "application/json"});
+    let a = document.createElement("a");
+    a.href = URL.createObjectURL(blob);
+    a.download = "zta_user.json";
+    a.click();
+}
+
+/* -----------------------------
+   DELETE ACCOUNT
+-------------------------------- */
+function deleteAccount() {
+    if (confirm("Are you sure you want to delete your account?")) {
+        localStorage.removeItem("zta_user");
+        alert("Account deleted.");
+        window.location.href = "auth.html";
+    }
+}
+</script>
 
 </body>
 </html>
-
