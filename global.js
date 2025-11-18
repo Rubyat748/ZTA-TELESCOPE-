@@ -1,159 +1,188 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<title>ZTA - Login / Signup</title>
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+/* =========================================================
+   ZTA - FIREBASE GLOBAL AUTH SYSTEM
+   Works for ALL pages
+========================================================= */
 
-<style>
-    body {
-        margin: 0;
-        font-family: Arial, sans-serif;
-        background: url("assets/background.jpg") no-repeat center center fixed;
-        background-size: cover;
-        color: white;
-    }
+// -------------------------------
+// FIREBASE IMPORTS
+// -------------------------------
+import {
+    initializeApp
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 
-    .container {
-        width: 360px;
-        margin: 80px auto;
-        padding: 25px;
-        backdrop-filter: blur(12px);
-        background: rgba(0,0,0,0.55);
-        border-radius: 12px;
-    }
+import {
+    getAuth,
+    createUserWithEmailAndPassword,
+    signInWithEmailAndPassword,
+    signOut,
+    GoogleAuthProvider,
+    signInWithPopup,
+    onAuthStateChanged
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 
-    h2 {
-        text-align: center;
-        margin-bottom: 25px;
-    }
+import {
+    getFirestore,
+    doc,
+    setDoc,
+    getDoc
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
-    input {
-        width: 100%;
-        padding: 12px;
-        margin-top: 12px;
-        border-radius: 6px;
-        border: none;
-        background: rgba(255,255,255,0.15);
-        color: white;
-        outline: none;
-    }
-
-    button {
-        width: 100%;
-        padding: 12px;
-        margin-top: 18px;
-        border: none;
-        background: #ff5050;
-        color: white;
-        border-radius: 6px;
-        font-size: 16px;
-        cursor: pointer;
-    }
-
-    .google-btn {
-        background: white;
-        color: black;
-        font-weight: bold;
-    }
-
-    .switch {
-        margin-top: 15px;
-        text-align: center;
-        cursor: pointer;
-        color: #ccc;
-    }
-
-    .switch:hover {
-        color: #ff5050;
-    }
-</style>
-</head>
-<body>
-
-<div class="container">
-
-    <!-- LOGIN BOX -->
-    <div id="loginBox">
-        <h2>Login</h2>
-        <input type="text" id="login_email" placeholder="Email">
-        <input type="password" id="login_password" placeholder="Password">
-        <button onclick="loginNow()">Login</button>
-
-        <button class="google-btn" onclick="googleLogin()">Login with Google</button>
-
-        <div class="switch" onclick="showSignup()">Don't have an account? Signup</div>
-    </div>
-
-    <!-- SIGNUP BOX -->
-    <div id="signupBox" style="display:none;">
-        <h2>Create Account</h2>
-        <input type="text" id="signup_username" placeholder="Name">
-        <input type="text" id="signup_email" placeholder="Email">
-        <input type="password" id="signup_password" placeholder="Password">
-        <button onclick="signupNow()">Create Account</button>
-
-        <div class="switch" onclick="showLogin()">Already have an account? Login</div>
-    </div>
-
-</div>
-
-<!-- FIREBASE AUTH + GLOBAL -->
-<script type="module">
-import { signupUser, loginUser, googleAuth } from "./global.js";
-
-/* SWITCH LOGIN/SIGNUP */
-window.showSignup = function () {
-    document.getElementById("loginBox").style.display = "none";
-    document.getElementById("signupBox").style.display = "block";
+// -------------------------------
+// FIREBASE CONFIG
+// -------------------------------
+const firebaseConfig = {
+    apiKey: "AIzaSyAvoeiw_fwmSkFN97hGzSsUTn2KJ1G2jQc",
+    authDomain: "astrophotography-with-zerox.firebaseapp.com",
+    projectId: "astrophotography-with-zerox",
+    storageBucket: "astrophotography-with-zerox.firebasestorage.app",
+    messagingSenderId: "847847244230",
+    appId: "1:847847244230:web:ecd8f9066f385a025072c7",
+    measurementId: "G-38YEEM9D71"
 };
 
-window.showLogin = function () {
-    document.getElementById("signupBox").style.display = "none";
-    document.getElementById("loginBox").style.display = "block";
-};
+// Initialize Firebase
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
 
-/* SIGNUP */
-window.signupNow = async function () {
-    let username = document.getElementById("signup_username").value.trim();
-    let email = document.getElementById("signup_email").value.trim();
-    let password = document.getElementById("signup_password").value.trim();
 
-    let res = await signupUser(username, email, password);
+// =========================================================
+//   SIGNUP USER
+// =========================================================
+export async function signupUser(username, email, password) {
+    try {
+        const userCred = await createUserWithEmailAndPassword(auth, email, password);
 
-    if (res.status === "success") {
-        alert("Account created!");
-        showLogin();
-    } else {
-        alert(res.message);
+        // Create Firestore user data
+        await setDoc(doc(db, "users", userCred.user.uid), {
+            username: username,
+            email: email,
+            bio: "",
+            created: new Date().toISOString(),
+            lastLogin: new Date().toISOString(),
+            pfp: ""
+        });
+
+        return { status: "success" };
+
+    } catch (error) {
+        return { status: "fail", message: error.message };
     }
-};
+}
 
-/* LOGIN */
-window.loginNow = async function () {
-    let email = document.getElementById("login_email").value.trim();
-    let password = document.getElementById("login_password").value.trim();
 
-    let res = await loginUser(email, password);
+// =========================================================
+//   LOGIN USER
+// =========================================================
+export async function loginUser(email, password) {
+    try {
+        const userCred = await signInWithEmailAndPassword(auth, email, password);
 
-    if (res.status === "success") {
-        window.location.href = "dashboard.html";
-    } else {
-        alert(res.message);
+        // Update last login time
+        await setDoc(doc(db, "users", userCred.user.uid), {
+            lastLogin: new Date().toISOString()
+        }, { merge: true });
+
+        return { status: "success" };
+
+    } catch (error) {
+        return { status: "fail", message: error.message };
     }
-};
+}
 
-/* GOOGLE LOGIN */
-window.googleLogin = async function () {
-    let res = await googleAuth();
-    if (res.status === "success") {
-        window.location.href = "dashboard.html";
-    } else {
-        alert(res.message);
+
+// =========================================================
+//   GOOGLE LOGIN
+// =========================================================
+export async function googleAuth() {
+    try {
+        const provider = new GoogleAuthProvider();
+        const result = await signInWithPopup(auth, provider);
+
+        const user = result.user;
+
+        // Check if user exists in DB
+        const ref = doc(db, "users", user.uid);
+        const snap = await getDoc(ref);
+
+        if (!snap.exists()) {
+            await setDoc(ref, {
+                username: user.displayName,
+                email: user.email,
+                bio: "",
+                pfp: user.photoURL,
+                created: new Date().toISOString(),
+                lastLogin: new Date().toISOString()
+            });
+        }
+
+        return { status: "success" };
+
+    } catch (error) {
+        return { status: "fail", message: error.message };
     }
-};
-</script>
+}
 
-</body>
-</html>
-    
+
+
+// =========================================================
+//   LOGOUT
+// =========================================================
+export function logout() {
+    signOut(auth).then(() => {
+        window.location.href = "auth.html";
+    });
+}
+
+
+
+// =========================================================
+//   LOAD NAVBAR LOGIN STATUS
+// =========================================================
+export function checkLoginStatus() {
+    onAuthStateChanged(auth, async (user) => {
+        const loginBtn = document.getElementById("loginBtn");
+        const accountBtn = document.getElementById("accountBtn");
+
+        if (!loginBtn || !accountBtn) return;
+
+        if (user) {
+            loginBtn.style.display = "none";
+            accountBtn.style.display = "inline-block";
+        } else {
+            loginBtn.style.display = "inline-block";
+            accountBtn.style.display = "none";
+        }
+    });
+}
+
+
+
+// =========================================================
+//   LOAD PROFILE DATA (Use inside profile.html)
+// =========================================================
+export async function loadProfilePage() {
+    onAuthStateChanged(auth, async (user) => {
+        if (!user) {
+            alert("Login required!");
+            window.location.href = "auth.html";
+            return;
+        }
+
+        const ref = doc(db, "users", user.uid);
+        const snap = await getDoc(ref);
+
+        let data = snap.data();
+
+        document.getElementById("profileUsername").innerText = data.username;
+        document.getElementById("profileEmail").innerText = data.email;
+        document.getElementById("bioInput").value = data.bio || "";
+        document.getElementById("createdDateText").innerText = "Created: " + data.created;
+        document.getElementById("lastLoginText").innerText = "Last Login: " + data.lastLogin;
+
+        if (data.pfp) {
+            document.getElementById("profilePic").src = data.pfp;
+        }
+    });
+}
+
