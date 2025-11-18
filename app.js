@@ -1,7 +1,12 @@
+/* =========================================================
+   ZTA APP.JS — OFFLINE LOGIN & SIGNUP (NO SERVER REQUIRED)
+   Uses localStorage to save user data
+========================================================= */
+
+
 // -------------------------------
 // Switch Between Login & Signup
 // -------------------------------
-
 function showSignup() {
     document.getElementById("loginBox").style.display = "none";
     document.getElementById("signupBox").style.display = "block";
@@ -14,57 +19,55 @@ function showLogin() {
 
 
 // -------------------------------
-// SIGNUP FUNCTION
+// SIGNUP FUNCTION (LOCAL STORAGE)
 // -------------------------------
+function signupUser() {
+    const username = document.getElementById("signup_username").value.trim();
+    const email = document.getElementById("signup_email").value.trim();
+    const password = document.getElementById("signup_password").value.trim();
 
-async function signupUser() {
-    const username = document.getElementById("signup_username").value;
-    const email = document.getElementById("signup_email").value;
-    const password = document.getElementById("signup_password").value;
-
-    const response = await fetch("/signup", {
-        method: "POST",
-        headers: {"Content-Type": "application/json"},
-        body: JSON.stringify({
-            username: username,
-            email: email,
-            password: password
-        })
-    });
-
-    const data = await response.json();
-
-    if (data.status === "success") {
-        alert("Account Created!");
-        showLogin();
-    } else {
-        alert(data.msg);
+    if (username === "" || email === "" || password === "") {
+        alert("All fields are required.");
+        return;
     }
+
+    const userObj = {
+        username: username,
+        email: email,
+        password: password,
+        profilePic: ""
+    };
+
+    localStorage.setItem("zta_user", JSON.stringify(userObj));
+
+    alert("Account created! You can now log in.");
+    showLogin();
 }
 
 
 // -------------------------------
-// LOGIN FUNCTION
+// LOGIN FUNCTION (LOCAL STORAGE)
 // -------------------------------
+function loginUser() {
+    const login_id = document.getElementById("login_id").value.trim();
+    const password = document.getElementById("login_password").value.trim();
 
-async function loginUser() {
-    const login_id = document.getElementById("login_id").value;
-    const password = document.getElementById("login_password").value;
+    const storedUser = localStorage.getItem("zta_user");
 
-    const response = await fetch("/login", {
-        method: "POST",
-        headers: {"Content-Type": "application/json"},
-        body: JSON.stringify({
-            login_id: login_id,
-            password: password
-        })
-    });
+    if (!storedUser) {
+        alert("No user found. Please sign up first.");
+        return;
+    }
 
-    const data = await response.json();
+    const user = JSON.parse(storedUser);
 
-    if (data.status === "success") {
-        window.location.href = "/dashboard"; // go to dashboard
+    if ((login_id === user.username || login_id === user.email) &&
+        password === user.password) {
+
+        alert("Login successful!");
+        window.location.href = "dashboard.html";
+
     } else {
-        alert(data.msg);
+        alert("Wrong username/email or password.");
     }
 }
