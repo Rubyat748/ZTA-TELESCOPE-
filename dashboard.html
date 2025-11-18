@@ -156,27 +156,32 @@
     <p>Your journey begins here. Explore the universe with ZTA.</p>
 </section>
 
-<!-- GLOBAL SCRIPT -->
-<script src="global.js"></script>
+<!-- FIREBASE -->
+<script type="module">
+import { auth, db } from "./firebase.js";
+import { onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
+import { doc, getDoc } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
 
-<script>
-// FORCE LOGIN CHECK
-document.addEventListener("DOMContentLoaded", function () {
-    let user = localStorage.getItem("zta_user");
+import { checkLoginStatus, showAccountDropdown } from "./global.js";
 
+onAuthStateChanged(auth, async (user) => {
     if (!user) {
         alert("Login required!");
         window.location.href = "auth.html";
         return;
     }
 
-    user = JSON.parse(user);
+    // Load username from Firestore
+    const ref = doc(db, "users", user.uid);
+    const snap = await getDoc(ref);
 
-    // Load username
-    document.getElementById("usernameDisplay").innerText = user.username;
+    if (snap.exists()) {
+        document.getElementById("usernameDisplay").innerText = snap.data().username;
+    } else {
+        document.getElementById("usernameDisplay").innerText = "User";
+    }
 
-    // Run navbar login status
-    checkLoginStatus();
+    checkLoginStatus(); 
 });
 </script>
 
