@@ -17,7 +17,6 @@
         background: url("assets/background.jpg") no-repeat center center fixed;
         background-size: cover;
         color: white;
-        text-align: center;
         overflow-x: hidden;
     }
 
@@ -29,53 +28,42 @@
         justify-content: space-between;
         align-items: center;
         backdrop-filter: blur(10px);
-        background: rgba(0,0,0,0.3);
-        position: sticky;
-        top: 0;
+        background: rgba(0,0,0,0.4);
     }
 
     .logo {
-        font-size: 32px;
+        font-size: 34px;
         font-weight: bold;
         letter-spacing: 3px;
     }
 
     nav a {
         margin-left: 25px;
+        font-size: 18px;
         text-decoration: none;
         color: white;
-        font-size: 17px;
-        transition: 0.3s;
     }
 
     nav a:hover {
         color: #ff5050;
     }
 
-    .btn-logout {
-        padding: 8px 16px;
-        border-radius: 6px;
+    .logout {
         background: #ff5050;
+        padding: 8px 14px;
+        border-radius: 6px;
+        color: white;
         border: none;
         cursor: pointer;
-        color: white;
-        font-size: 16px;
     }
 
-    /* MAIN CONTENT */
     .content {
+        text-align: center;
         margin-top: 100px;
     }
 
     h1 {
-        font-size: 45px;
-        text-shadow: 0 0 10px black;
-    }
-
-    p {
-        font-size: 22px;
-        margin-top: 10px;
-        text-shadow: 0 0 8px black;
+        font-size: 42px;
     }
 </style>
 
@@ -83,8 +71,8 @@
 
 <body>
 
-<!-- NAVBAR -->
 <header class="navbar">
+
     <div class="logo">ZTA</div>
 
     <nav>
@@ -94,28 +82,28 @@
         <a href="mission.html">Mission</a>
         <a href="shop.html">Gear</a>
         <a href="contact.html">Contact</a>
-        <button class="btn-logout" onclick="logout()">Logout</button>
+        <button class="logout" onclick="logout()">Logout</button>
     </nav>
+
 </header>
 
-<!-- PAGE CONTENT -->
 <section class="content">
     <h1>Welcome, <span id="username"></span>!</h1>
-    <p>You are successfully logged into your ZTA Dashboard.</p>
+    <p>You are logged into your ZTA dashboard.</p>
 </section>
 
+
 <script>
-    // LOAD USERNAME FROM STORAGE
-    let stored = JSON.parse(localStorage.getItem("zta_user"));
-    if (!stored) {
+    // LOAD USERNAME
+    let user = localStorage.getItem("zta_user");
+    if (!user) {
         window.location.href = "auth.html";
     } else {
-        document.getElementById("username").innerText = stored.username;
+        document.getElementById("username").innerText = JSON.parse(user).username;
     }
 
-    // LOG OUT
     function logout() {
-        alert("Logged out!");
+        alert("Logged Out");
         window.location.href = "auth.html";
     }
 </script>
