@@ -121,7 +121,7 @@
         <a href="mission.html">Mission</a>
         <a href="shop.html">Gear</a>
         <a href="contact.html">Contact</a>
-        <a href="auth.html" class="btn">Login</a>
+        <a href="auth.html" class="btn" id="loginBtn">Login</a>
     </nav>
 </header>
 
@@ -132,6 +132,24 @@
         <button>Explore</button>
     </div>
 </section>
+
+
+<!-- ⭐ LOGIN CHECK SCRIPT (fixes logout issue) -->
+<script>
+    let loggedUser = localStorage.getItem("zta_user");
+
+    if (loggedUser) {
+        loggedUser = JSON.parse(loggedUser);
+
+        // OPTIONAL: hide login button when logged in
+        let loginBtn = document.getElementById("loginBtn");
+        if (loginBtn) {
+            loginBtn.style.display = "none";
+        }
+
+        console.log("Logged in as:", loggedUser.username);
+    }
+</script>
 
 </body>
 </html>
