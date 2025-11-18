@@ -29,13 +29,22 @@
         justify-content: space-between;
         align-items: center;
         backdrop-filter: blur(10px);
-        background: rgba(0, 0, 0, 0.3);
+        background: rgba(0, 0, 0, 0.35);
+        position: sticky;
+        top: 0;
+        z-index: 999;
     }
 
     .logo {
         font-size: 32px;
         font-weight: bold;
         letter-spacing: 3px;
+    }
+
+    nav {
+        display: flex;
+        align-items: center;
+        position: relative;
     }
 
     nav a {
@@ -50,15 +59,54 @@
         color: #ff5050;
     }
 
-    .btn {
+    /* LOGIN BUTTON */
+    .btn-login {
         padding: 8px 18px;
         border: 1px solid #fff;
         border-radius: 6px;
+        margin-left: 20px;
     }
 
-    .btn:hover {
+    .btn-login:hover {
         background: #ff5050;
         border-color: #ff5050;
+    }
+
+    /* ACCOUNT DROPDOWN */
+    .account-btn {
+        margin-left: 25px;
+        cursor: pointer;
+        font-size: 17px;
+        color: white;
+        display: none;
+    }
+
+    .dropdown {
+        position: absolute;
+        top: 45px;
+        right: 0;
+        width: 160px;
+        background: rgba(0, 0, 0, 0.7);
+        backdrop-filter: blur(12px);
+        border-radius: 8px;
+        padding: 10px 0;
+        display: none;
+        flex-direction: column;
+        opacity: 0;
+        transform: translateY(-10px);
+        transition: 0.25s ease;
+    }
+
+    .dropdown a {
+        padding: 10px 20px;
+        text-decoration: none;
+        color: #fff;
+        font-size: 15px;
+        transition: 0.3s;
+    }
+
+    .dropdown a:hover {
+        background: rgba(255, 80, 80, 0.35);
     }
 
     /* HERO SECTION */
@@ -107,7 +155,6 @@
         border-color: #ff5050;
     }
 </style>
-
 </head>
 
 <body>
@@ -121,7 +168,19 @@
         <a href="mission.html">Mission</a>
         <a href="shop.html">Gear</a>
         <a href="contact.html">Contact</a>
-        <a href="auth.html" class="btn" id="loginBtn">Login</a>
+
+        <!-- Login button -->
+        <a href="auth.html" class="btn-login" id="loginBtn">Login</a>
+
+        <!-- Account button -->
+        <span class="account-btn" id="accountBtn">Account ▼</span>
+
+        <!-- Dropdown -->
+        <div class="dropdown" id="dropdownMenu">
+            <a href="dashboard.html">Dashboard</a>
+            <a href="profile.html">Profile</a>
+            <a href="#" onclick="logout()">Logout</a>
+        </div>
     </nav>
 </header>
 
@@ -133,23 +192,8 @@
     </div>
 </section>
 
-
-<!-- ⭐ LOGIN CHECK SCRIPT (fixes logout issue) -->
-<script>
-    let loggedUser = localStorage.getItem("zta_user");
-
-    if (loggedUser) {
-        loggedUser = JSON.parse(loggedUser);
-
-        // OPTIONAL: hide login button when logged in
-        let loginBtn = document.getElementById("loginBtn");
-        if (loginBtn) {
-            loginBtn.style.display = "none";
-        }
-
-        console.log("Logged in as:", loggedUser.username);
-    }
-</script>
+<!-- GLOBAL JS -->
+<script src="global.js"></script>
 
 </body>
 </html>
