@@ -66,20 +66,22 @@
 <div class="box">
 
     <h2>Login</h2>
-    <input type="text" id="login-user" placeholder="Email or Username">
-    <input type="password" id="login-pass" placeholder="Password">
-    <button onclick="login()">Login</button>
+    <input type="text" id="login_user" placeholder="Email or Username">
+    <input type="password" id="login_pass" placeholder="Password">
+    <button onclick="loginUser()">Login</button>
 
     <hr>
 
     <h2>Sign Up</h2>
-    <input type="text" id="signup-username" placeholder="Username">
-    <input type="email" id="signup-email" placeholder="Email">
-    <input type="password" id="signup-password" placeholder="Password">
-    <button onclick="signup()">Sign Up</button>
+    <input type="text" id="signup_username" placeholder="Username">
+    <input type="email" id="signup_email" placeholder="Email">
+    <input type="password" id="signup_password" placeholder="Password">
+    <button onclick="signupUser()">Sign Up</button>
 
 </div>
 
+
+<script src="global.js"></script>
 
 <script>
 
@@ -100,24 +102,24 @@ function downloadJSON(data, filename) {
 
 
 // ----------------------
-// SIGN UP
+// SIGN UP (LOCAL STORAGE)
 // ----------------------
-function signup() {
-    let username = document.getElementById("signup-username").value.trim();
-    let email = document.getElementById("signup-email").value.trim();
-    let password = document.getElementById("signup-password").value.trim();
+function signupUser() {
+    let username = document.getElementById("signup_username").value.trim();
+    let email = document.getElementById("signup_email").value.trim();
+    let password = document.getElementById("signup_password").value.trim();
 
     if (!username || !email || !password) {
         alert("Fill all fields!");
         return;
     }
 
-    let user = { username, email, password };
+    let user = { username, email, password, profilePic: "" };
 
-    // Save in storage
+    // Save to localStorage
     localStorage.setItem("zta_user", JSON.stringify(user));
 
-    // Download JSON file
+    // Download backup JSON
     downloadJSON(user, "zta_user.json");
 
     alert("Sign Up Completed! Now Login.");
@@ -127,13 +129,14 @@ function signup() {
 
 
 // ----------------------
-// LOGIN
+// LOGIN (LOCAL STORAGE)
 // ----------------------
-function login() {
-    let inputUser = document.getElementById("login-user").value.trim();
-    let pass = document.getElementById("login-pass").value.trim();
+function loginUser() {
+    let inputUser = document.getElementById("login_user").value.trim();
+    let pass = document.getElementById("login_pass").value.trim();
 
     let stored = localStorage.getItem("zta_user");
+
     if (!stored) {
         alert("No user found. Please sign up first.");
         return;
@@ -143,7 +146,7 @@ function login() {
 
     if ((inputUser === user.email || inputUser === user.username) && pass === user.password) {
         alert("Login Successful!");
-        window.location.href = "dashboard.html";
+        window.location.href = "dashboard.html";  // FIXED
     } else {
         alert("Incorrect Username/Email or Password");
     }
