@@ -6,19 +6,13 @@
 <title>ZTA - Gallery</title>
 
 <style>
-    * {
-        margin: 0;
-        padding: 0;
-        box-sizing: border-box;
-        font-family: Arial, sans-serif;
-    }
+    * { margin: 0; padding: 0; box-sizing: border-box; font-family: Arial; }
 
     body {
         background: url("assets/background.jpg") no-repeat center center fixed;
         background-size: cover;
-        min-height: 100vh;
         color: white;
-        overflow-x: hidden;
+        min-height: 100vh;
     }
 
     /* NAVBAR */
@@ -29,80 +23,28 @@
         justify-content: space-between;
         align-items: center;
         backdrop-filter: blur(10px);
-        background: rgba(0, 0, 0, 0.35);
+        background: rgba(0,0,0,0.35);
         position: sticky;
         top: 0;
         z-index: 999;
     }
 
-    .logo {
-        font-size: 32px;
-        font-weight: bold;
-        letter-spacing: 3px;
-    }
-
-    nav {
-        display: flex;
-        align-items: center;
-        position: relative;
-    }
+    .logo { font-size: 32px; font-weight: bold; letter-spacing: 3px; }
 
     nav a {
         margin-left: 25px;
+        color: white;
         text-decoration: none;
-        color: #fff;
         font-size: 17px;
         transition: 0.3s;
     }
 
-    nav a:hover {
-        color: #ff5050;
-    }
+    nav a:hover { color: #ff5050; }
 
     .btn-login {
         padding: 8px 18px;
-        border: 1px solid #fff;
+        border: 1px solid white;
         border-radius: 6px;
-        margin-left: 20px;
-    }
-
-    .btn-login:hover {
-        background: #ff5050;
-    }
-
-    .account-btn {
-        margin-left: 25px;
-        cursor: pointer;
-        font-size: 17px;
-        color: white;
-        display: none;
-    }
-
-    .dropdown {
-        position: absolute;
-        top: 45px;
-        right: 0;
-        width: 160px;
-        background: rgba(0,0,0,0.7);
-        backdrop-filter: blur(12px);
-        border-radius: 8px;
-        padding: 10px 0;
-        display: none;
-        flex-direction: column;
-        opacity: 0;
-        transform: translateY(-10px);
-        transition: 0.25s ease;
-    }
-
-    .dropdown a {
-        padding: 10px 22px;
-        text-decoration: none;
-        color: white;
-        font-size: 15px;
-    }
-
-    .dropdown a:hover {
-        background: rgba(255, 80, 80, 0.35);
     }
 
     /* GALLERY GRID */
@@ -116,7 +58,7 @@
 
     .gallery img {
         width: 100%;
-        height: 180px;
+        height: 200px;
         object-fit: cover;
         border-radius: 10px;
         cursor: pointer;
@@ -129,52 +71,199 @@
         border-color: #ff5050;
     }
 
+    /* UPLOAD BUTTON */
+    .upload-box {
+        width: 90%;
+        margin: 20px auto;
+        text-align: center;
+    }
+
+    /* POPUP VIEWER */
+    .popup-bg {
+        position: fixed;
+        top: 0; left: 0;
+        width: 100%; height: 100%;
+        background: rgba(0,0,0,0.8);
+        display: none;
+        justify-content: center;
+        align-items: center;
+        padding: 20px;
+    }
+
+    .popup {
+        width: 90%;
+        max-width: 600px;
+        background: rgba(0,0,0,0.8);
+        border-radius: 12px;
+        padding: 15px;
+    }
+
+    .popup img {
+        width: 100%;
+        border-radius: 10px;
+    }
+
+    .caption-text { margin: 10px 0; opacity: 0.8; font-size: 16px; }
+
+    .like-btn {
+        cursor: pointer;
+        font-size: 20px;
+    }
+
+    .comments-box {
+        max-height: 170px;
+        overflow-y: auto;
+        margin-top: 10px;
+        padding-right: 10px;
+    }
+
+    .comment-item {
+        padding: 6px;
+        border-bottom: 1px solid rgba(255,255,255,0.2);
+    }
+
+    .close-btn {
+        margin-top: 10px;
+        width: 100%;
+        padding: 10px;
+        background: #ff5050;
+        border: none;
+        border-radius: 6px;
+        color: white;
+        cursor: pointer;
+        font-size: 16px;
+    }
 </style>
+
 </head>
 <body>
 
 <header class="navbar">
     <div class="logo">ZTA</div>
-
     <nav>
         <a href="index.html">About Me</a>
         <a href="gallery.html">Gallery</a>
         <a href="mission.html">Mission</a>
         <a href="shop.html">Gear</a>
         <a href="contact.html">Contact</a>
-
         <a href="auth.html" class="btn-login" id="loginBtn">Login</a>
-
-        <span class="account-btn" id="accountBtn">Account ▼</span>
-
-        <div class="dropdown" id="dropdownMenu">
-            <a href="dashboard.html">Dashboard</a>
-            <a href="profile.html">Profile</a>
-            <a href="#" onclick="logout()">Logout</a>
-        </div>
     </nav>
 </header>
 
-<section class="gallery">
-    <!-- You can add as many images as you want -->
-    <img src="assets/gallery1.jpg" onclick="needLogin()">
-    <img src="assets/gallery2.jpg" onclick="needLogin()">
-    <img src="assets/gallery3.jpg" onclick="needLogin()">
-    <img src="assets/gallery4.jpg" onclick="needLogin()">
-    <img src="assets/gallery5.jpg" onclick="needLogin()">
-    <img src="assets/gallery6.jpg" onclick="needLogin()">
-</section>
+<div class="upload-box">
+    <input type="file" id="uploadInput" accept="image/*">
+    <input type="text" id="captionInput" placeholder="Add caption..." style="width:300px; padding:5px;">
+    <button onclick="uploadPhoto()">Upload</button>
+</div>
 
-<script src="global.js"></script>
+<section class="gallery" id="gallery"></section>
+
+<!-- POPUP VIEWER -->
+<div class="popup-bg" id="popupBG">
+    <div class="popup">
+        <img id="popupImg">
+        <p class="caption-text" id="popupCaption"></p>
+
+        <span class="like-btn" onclick="toggleLike()">❤️ <span id="likeCount">0</span></span>
+
+        <div class="comments-box" id="commentsBox"></div>
+
+        <input type="text" id="commentInput" placeholder="Add a comment..." style="width:100%; padding:7px; margin-top:10px;">
+        <button onclick="addComment()" class="close-btn">Add Comment</button>
+
+        <button class="close-btn" onclick="closePopup()">Close</button>
+    </div>
+</div>
 
 <script>
-function needLogin() {
-    // show alert only - no opening the image
-    let user = localStorage.getItem("zta_user");
-    if (!user) {
-        alert("Login required!");
-        return;
-    }
+let photos = JSON.parse(localStorage.getItem("zta_gallery") || "[]");
+let currentIndex = 0;
+
+/************** LOAD GALLERY **************/
+function loadGallery() {
+    const gallery = document.getElementById("gallery");
+    gallery.innerHTML = "";
+
+    photos.forEach((pic, i) => {
+        let img = document.createElement("img");
+        img.src = pic.src;
+        img.onclick = () => openPopup(i);
+        gallery.appendChild(img);
+    });
+}
+loadGallery();
+
+/************** UPLOAD PHOTO **************/
+function uploadPhoto() {
+    let file = document.getElementById("uploadInput").files[0];
+    let caption = document.getElementById("captionInput").value.trim();
+
+    if (!file) return alert("Select an image!");
+
+    let reader = new FileReader();
+    reader.onload = function (e) {
+        photos.push({
+            src: e.target.result,
+            caption: caption,
+            likes: 0,
+            comments: []
+        });
+
+        localStorage.setItem("zta_gallery", JSON.stringify(photos));
+        loadGallery();
+        alert("Photo uploaded!");
+    };
+    reader.readAsDataURL(file);
+}
+
+/************** OPEN POPUP **************/
+function openPopup(i) {
+    currentIndex = i;
+
+    let pic = photos[i];
+    document.getElementById("popupImg").src = pic.src;
+    document.getElementById("popupCaption").innerText = pic.caption;
+    document.getElementById("likeCount").innerText = pic.likes;
+
+    loadComments(i);
+
+    document.getElementById("popupBG").style.display = "flex";
+}
+
+/************** CLOSE POPUP **************/
+function closePopup() {
+    document.getElementById("popupBG").style.display = "none";
+}
+
+/************** LIKE PHOTO **************/
+function toggleLike() {
+    photos[currentIndex].likes++;
+    localStorage.setItem("zta_gallery", JSON.stringify(photos));
+    document.getElementById("likeCount").innerText = photos[currentIndex].likes;
+}
+
+/************** COMMENTS **************/
+function loadComments(i) {
+    let box = document.getElementById("commentsBox");
+    box.innerHTML = "";
+
+    photos[i].comments.forEach(c => {
+        let item = document.createElement("div");
+        item.className = "comment-item";
+        item.innerText = c;
+        box.appendChild(item);
+    });
+}
+
+function addComment() {
+    let text = document.getElementById("commentInput").value.trim();
+    if (!text) return;
+
+    photos[currentIndex].comments.push(text);
+    localStorage.setItem("zta_gallery", JSON.stringify(photos));
+
+    document.getElementById("commentInput").value = "";
+    loadComments(currentIndex);
 }
 </script>
 
