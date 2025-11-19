@@ -124,3 +124,38 @@ export function logoutUser() {
     signOut(auth);
     window.location.href = "auth.html";
 }
+import { auth, db } from "./firebase.js";
+import {
+    signInWithEmailAndPassword,
+    onAuthStateChanged
+} from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
+
+import {
+    doc,
+    getDoc
+} from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
+
+async function loginUser() {
+    const email = document.getElementById("login_email").value;
+    const pass = document.getElementById("login_password").value;
+
+    try {
+        const userCred = await signInWithEmailAndPassword(auth, email, pass);
+        const uid = userCred.user.uid;
+
+        const userDoc = await getDoc(doc(db, "users", uid));
+
+        if (userDoc.exists()) {
+            if (userDoc.data().banned === true) {
+                alert("❌ Your account is banned.");
+                auth.signOut();
+                return;
+            }
+        }
+
+        window.location.href = "dashboard.html";
+
+    } catch (err) {
+        alert("Login failed: " + err.message);
+    }
+}
