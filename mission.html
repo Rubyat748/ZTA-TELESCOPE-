@@ -6,15 +6,8 @@
 <title>ZTA - Mission</title>
 
 <style>
-    /* ===== GLOBAL RESET ===== */
-    * {
-        margin: 0;
-        padding: 0;
-        box-sizing: border-box;
-        font-family: Arial, sans-serif;
-    }
+    * { margin: 0; padding: 0; box-sizing: border-box; font-family: Arial, sans-serif; }
 
-    /* ===== BACKGROUND ===== */
     body {
         background: url("assets/background.jpg") no-repeat center center fixed;
         background-size: cover;
@@ -22,7 +15,7 @@
         overflow-x: hidden;
     }
 
-    /* ===== NAVBAR ===== */
+    /* NAVBAR */
     .navbar {
         width: 100%;
         padding: 22px 60px;
@@ -30,7 +23,10 @@
         justify-content: space-between;
         align-items: center;
         backdrop-filter: blur(10px);
-        background: rgba(0, 0, 0, 0.3);
+        background: rgba(0, 0, 0, 0.35);
+        position: sticky;
+        top: 0;
+        z-index: 999;
     }
 
     .logo {
@@ -39,30 +35,68 @@
         letter-spacing: 3px;
     }
 
+    nav {
+        display: flex;
+        align-items: center;
+        position: relative;
+    }
+
     nav a {
         margin-left: 25px;
-        color: white;
         text-decoration: none;
+        color: white;
         font-size: 18px;
-        transition: 0.3s;
+        transition: .3s;
     }
 
-    nav a:hover {
-        color: #ff5050;
-    }
+    nav a:hover { color: #ff5050; }
 
-    .btn {
+    .btn-login {
         padding: 8px 18px;
         border: 1px solid white;
         border-radius: 6px;
     }
 
-    .btn:hover {
+    .btn-login:hover {
         background: #ff5050;
         border-color: #ff5050;
     }
 
-    /* ===== PAGE CONTENT ===== */
+    .account-btn {
+        margin-left: 25px;
+        cursor: pointer;
+        font-size: 17px;
+        color: white;
+        display: none;
+    }
+
+    .dropdown {
+        position: absolute;
+        top: 45px;
+        right: 0;
+        width: 160px;
+        background: rgba(0,0,0,0.7);
+        border-radius: 8px;
+        padding: 10px 0;
+        display: none;
+        flex-direction: column;
+        opacity: 0;
+        transform: translateY(-10px);
+        transition: .25s;
+    }
+
+    .dropdown a {
+        color: white;
+        padding: 10px 20px;
+        text-decoration: none;
+        font-size: 15px;
+    }
+
+    .dropdown a:hover {
+        background: rgba(255,80,80,0.3);
+    }
+
+    /* CONTENT */
     .content {
         width: 100%;
         display: flex;
@@ -75,8 +109,8 @@
         background: rgba(0, 0, 0, 0.55);
         padding: 35px;
         border-radius: 14px;
-        backdrop-filter: blur(4px);
         text-align: center;
+        backdrop-filter: blur(4px);
     }
 
     .mission-box h1 {
@@ -107,7 +141,16 @@
         <a href="mission.html">Mission</a>
         <a href="shop.html">Gear</a>
         <a href="contact.html">Contact</a>
-        <a href="auth.html" class="btn">Login</a>
+
+        <a href="auth.html" class="btn-login" id="loginBtn">Login</a>
+
+        <span class="account-btn" id="accountBtn">Account ▼</span>
+
+        <div class="dropdown" id="dropdownMenu">
+            <a href="dashboard.html">Dashboard</a>
+            <a href="profile.html">Profile</a>
+            <a href="#" onclick="logout()">Logout</a>
+        </div>
     </nav>
 </header>
 
@@ -117,11 +160,13 @@
         <p>
             At ZTA, our mission is to explore, build, and inspire.
             We aim to unlock the mysteries of the universe, one discovery at a time.
-            Through innovation, learning, and creativity, we continue pushing beyond
-            the boundaries of space and imagination.
+            Through innovation, imagination, and dedication, we continue pushing beyond
+            the boundaries of knowledge and possibility.
         </p>
     </div>
 </section>
+
+<script type="module" src="global.js"></script>
 
 </body>
 </html>
