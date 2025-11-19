@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>ZTA - Admin Login</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<style>
+/* ---------- STYLE FROM UIVERSE (Simplified + Clean) ---------- */
+body {
+    background: #0f0f16;
+    height: 100vh;
+    margin: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: white;
+    font-family: Arial;
+}
+
+.form-container {
+  width: 330px;
+  border-radius: 10px;
+  background-color: #111827;
+  padding: 2rem;
+  color: #f3f4f6;
+  box-shadow: 0 0 25px rgba(0,0,0,0.5);
+}
+
+.title {
+  text-align: center;
+  font-size: 1.7rem;
+  font-weight: 700;
+}
+
+.form {
+  margin-top: 1.5rem;
+}
+
+.input-group {
+  margin-bottom: 1.2rem;
+}
+
+.input-group label {
+  color: #9ca3af;
+  margin-bottom: 4px;
+  display: block;
+}
+
+.input-group input {
+  width: 100%;
+  border-radius: 6px;
+  border: 1px solid #374151;
+  padding: 0.75rem;
+  background: #111827;
+  color: #f3f4f6;
+  font-size: 16px;
+}
+
+.sign {
+  width: 100%;
+  padding: 0.75rem;
+  background-color: #a78bfa;
+  border: none;
+  border-radius: 6px;
+  font-weight: bold;
+  font-size: 1rem;
+  cursor: pointer;
+}
+
+.sign:hover {
+  background-color: #9167ff;
+}
+</style>
+</head>
+
+<body>
+
+<div class="form-container">
+    <p class="title">Admin Login</p>
+
+    <form class="form" onsubmit="adminLogin(event)">
+        <div class="input-group">
+            <label>Admin Email</label>
+            <input type="email" id="adminEmail" required>
+        </div>
+
+        <div class="input-group">
+            <label>Password</label>
+            <input type="password" id="adminPass" required>
+        </div>
+
+        <button class="sign">Sign in</button>
+    </form>
+</div>
+
+<script type="module">
+import { auth } from "./firebase.js";
+import { signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
+
+window.adminLogin = async function(e) {
+    e.preventDefault();
+
+    let email = document.getElementById("adminEmail").value;
+    let pass = document.getElementById("adminPass").value;
+
+    try {
+        let res = await signInWithEmailAndPassword(auth, email, pass);
+
+        // ONLY ALLOW SPECIFIC ADMIN UID
+        const ADMIN_UID = "<YOUR_ADMIN_UID>"; // <= CHANGE THIS
+        if (res.user.uid !== ADMIN_UID) {
+            alert("Unauthorized!");
+            return;
+        }
+
+        // Allow admin
+        window.location.href = "admin-panel.html";
+
+    } catch (err) {
+        alert(err.message);
+    }
+};
+</script>
+
+</body>
+</html>
