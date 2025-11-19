@@ -128,7 +128,18 @@ window.unban = async function(uid) {
     await updateDoc(doc(db, "users", uid), { banned: false });
     loadUsers();
 };
+<h1>Admin Dashboard</h1>
 
+<div id="stats"></div>
+
+<h2>Users</h2>
+<div id="usersList"></div>
+
+<h2>Gallery Images</h2>
+<div id="galleryList"></div>
+
+<script type="module" src="admin.js"></script>
+    
 /* ============================
    DELETE USER
 ============================ */
